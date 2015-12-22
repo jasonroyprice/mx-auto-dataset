@@ -2,10 +2,10 @@ from beamline import redis
 from rq.decorators import job
 from subprocess import call
 
-@job('default', connection=redis, timeout=1800)
+@job('autodatasetdev', connection=redis, timeout=1800)
 def dataset(*args, **kwargs):
     print "RUNNING NEW AUTODATASET"
-    cmd = ['/xray/progs/Python/applications/autodataset/new/autodataset.sh']
+    cmd = ['/beamline/apps/data-reduction-mx/autodataset.sh']
 
     for key, value in kwargs.iteritems():
         cmd.append("--%s" % key)
