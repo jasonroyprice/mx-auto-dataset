@@ -64,7 +64,7 @@ elif options.collection_id:
 output.dataset = Dataset.create_from_collection(collection_id)
 
 if not os.path.isfile(output.dataset.last_frame):
-    logger.error("File %s does not exist" % dataset.last_frame)
+    logger.error("File %s does not exist" % output.dataset.last_frame)
     sys.exit(1)
 
 for obj in pipeline:
