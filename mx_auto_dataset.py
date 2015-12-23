@@ -11,4 +11,4 @@ def dataset(*args, **kwargs):
         cmd.append("--%s" % key)
         cmd.append(str(value))
 
-    call(cmd, cwd='/ssd/test')
+    call(cmd, cwd='/scratch')
