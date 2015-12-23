@@ -4,7 +4,7 @@ from subprocess import call
 
 @job('autodatasetdev', connection=redis, timeout=1800)
 def dataset(*args, **kwargs):
-    print "RUNNING NEW AUTODATASET"
+    print "RUNNING DEVELOPMENT AUTODATASET"
     cmd = ['/beamline/apps/mx-auto-dataset/autodataset.sh']
 
     for key, value in kwargs.iteritems():
