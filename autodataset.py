@@ -22,6 +22,7 @@ parser = argparse.ArgumentParser()
 group = parser.add_mutually_exclusive_group(required=True)
 group.add_argument('--collection_id')
 group.add_argument('--dataset_id')
+parser.add_argument('--data_dir')
 
 for clz in set([obj.__class__ for obj in chain(*pipelines.pipelines.values())]):
     try:
@@ -62,6 +63,13 @@ elif options.collection_id:
     collection_id = options.collection_id
 
 output.dataset = Dataset.create_from_collection(collection_id)
+
+# modify top level directory - useful for testing with files mounted from sans
+datadir = options.data_dir
+if datadir != None:
+    splitpath = output.dataset.last_frame.split(os.sep)
+    splitpath[1] = datadir
+    output.dataset.last_frame = os.sep.join(splitpath)
 
 if not os.path.isfile(output.dataset.last_frame):
     logger.error("File %s does not exist" % output.dataset.last_frame)
