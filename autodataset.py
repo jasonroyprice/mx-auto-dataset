@@ -85,6 +85,8 @@ for obj in pipeline:
         obj.process(**vars(options))
     except Exception, e:
         logger.error("Failed to run %s: [%s] %s" % (obj.__class__.__name__, e.__class__.__name__, e.message))
+	if isinstance(e, EnvironmentError):
+	    logger.error("More information: %s %s" % (e.strerror, e.errno))
 
         output.dataset.__dict__.update(completed=True, success=False, status="Failed")
         output.dataset.save()
