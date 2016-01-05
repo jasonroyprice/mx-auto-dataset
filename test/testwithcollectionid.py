@@ -10,11 +10,11 @@ import argparse
 setup(get_database(staging=True))
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--id", help="collection ID of dataset to reprocess")
+parser.add_argument("--dataset_id", help="dataset ID")
 parser.add_argument("--data_dir", help="top-level directory name (like /data for most data)")
 args = parser.parse_args()
-if not args.id:
+if not args.dataset_id:
     import sys
-    sys.exit("no ID provided, aborting")
-job = dataset.delay(collection_id=args.id, data_dir=args.data_dir)
+    sys.exit("no dataset ID provided, aborting")
+job = dataset.delay(dataset_id=unicode(args.dataset_id), data_dir=unicode(args.data_dir))
 logger.info('Queued dataset job with id = %s' % (job,))
