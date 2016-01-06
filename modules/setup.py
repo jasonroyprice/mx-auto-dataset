@@ -53,5 +53,7 @@ class Retrigger(Base):
             src = os.path.join(self.from_dataset.processing_dir, item)
             dst = os.path.join(self.project_dir, item)
             
-            if os.path.exists(src):
+            try:
                 os.symlink(src,dst)
+            except:
+                print "warning, %s to %s symlink could not be made" % (src, dst)
