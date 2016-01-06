@@ -69,6 +69,8 @@ if options.data_dir != None:
     from utils import replace_top_directory_level
     last_frame = replace_top_directory_level(output.dataset.last_frame, options.data_dir)
     output.dataset.last_frame = last_frame
+    output.dataset.directory = replace_top_directory_level(output.dataset.directory, options.data_dir)
+    _input.from_dataset.processing_dir = replace_top_directory_level(_input.from_dataset.processing_dir, options.data_dir)
 
 if not os.path.isfile(output.dataset.last_frame):
     logger.error("File %s does not exist" % output.dataset.last_frame)
