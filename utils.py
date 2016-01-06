@@ -15,11 +15,30 @@ def replace_top_directory_level(full_path, data_dir):
 
     if not data_dir.startswith(os.sep) or data_dir.endswith(os.sep):
         raise ValueError("data_dir must start with %s and not end with %s" % (os.sep, os.sep))
+
+    use_full_path = False
+    if full_path.startswith('/data/home'): # example: /data/home/10123g/aragaod...
+        p=re.compile('^/data/home')
+        dirsplit = re.split(p, full_path, 1)
+        matched = p.search(full_path)
+        last_part=dirsplit[1].split(os.sep)
+        full_path = os.path.join(*last_part)
+        use_full_path = True
+    elif full_path.startswith('/data'): # example: /data/10123g/frames/...
+        p=re.compile('^/data')
+        dirsplit = re.split(p, full_path, 1)
+        matched = p.search(full_path)
+        last_part=dirsplit[1].split(os.sep)
+        combined = os.path.join(data_dir, *last_part)
+        return combined
     p=re.compile('[1-9][0-9]{2,5}[a-z]{0,1}(?!ays)') #regex for EPN - a bunch of numbers plus up to one letter
     matched= p.search(full_path)
     if matched:
         dirsplit = re.split(p, full_path,1)
         found_epn = re.findall(p, full_path)[0]
         last_part=dirsplit[1].split(os.sep)
-        combined= os.path.join(data_dir,found_epn, *last_part)
+        if use_full_path:
+            combined = os.path.join(data_dir, found_epn, "home", *last_part)
+        else:
+            combined= os.path.join(data_dir,found_epn, *last_part)
         return combined
