@@ -84,8 +84,8 @@ for obj in pipeline:
         logger.error("Failed to run %s: [%s] %s" % (obj.__class__.__name__, e.__class__.__name__, e.message))
         import traceback
         logger.error("traceback: %s" % traceback.format_exc())
-	if isinstance(e, EnvironmentError):
-	    logger.error("More information: %s %s" % (e.strerror, e.errno))
+        if isinstance(e, EnvironmentError):
+            logger.error("More information: %s %s" % (e.strerror, e.errno))
 
         output.dataset.__dict__.update(completed=True, success=False, status="Failed")
         output.dataset.save()
