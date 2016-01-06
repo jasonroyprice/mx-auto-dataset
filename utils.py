@@ -15,7 +15,7 @@ def replace_top_directory_level(full_path, data_dir):
 
     if not data_dir.startswith(os.sep) or data_dir.endswith(os.sep):
         raise ValueError("data_dir must start with %s and not end with %s" % (os.sep, os.sep))
-    p=re.compile('[1-9][0-9]+[a-z]{0,1}') #regex for EPN - a bunch of numbers plus up to one letter
+    p=re.compile('[1-9][0-9]{2,5}[a-z]{0,1}(?!ays)') #regex for EPN - a bunch of numbers plus up to one letter
     matched= p.search(full_path)
     if matched:
         dirsplit = re.split(p, full_path,1)
