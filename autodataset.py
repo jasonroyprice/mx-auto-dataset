@@ -64,17 +64,14 @@ elif options.collection_id:
 
 output.dataset = Dataset.create_from_collection(collection_id)
 
-last_frame = output.dataset.last_frame
-
 # modify top level directory - useful for testing with files mounted from sans
-datadir = options.data_dir
-if datadir != None:
-    splitpath = output.dataset.last_frame.split(os.sep)
-    splitpath[1] = datadir
-    last_frame = os.sep.join(splitpath)
+if options.data_dir != None:
+    from utils import replace_top_directory_level
+    last_frame = replace_top_directory_level(output.dataset.last_frame, options.data_dir)
+    output.dataset.last_frame = last_frame
 
-if not os.path.isfile(last_frame):
-    logger.error("File %s does not exist" % last_frame)
+if not os.path.isfile(output.dataset.last_frame):
+    logger.error("File %s does not exist" % output.dataset.last_frame)
     sys.exit(1)
 
 for obj in pipeline:
