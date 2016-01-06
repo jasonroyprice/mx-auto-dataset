@@ -1,3 +1,4 @@
+from idlelib.ReplaceDialog import replace
 import os
 import glob
 import shutil
@@ -41,7 +42,7 @@ class Setup(Base):
 
 class Retrigger(Base):
     def process(self, **kwargs):
-        os.mkdir(self.project_dir)
+        os.makedirs(self.project_dir)
 
         for item in ('INTEGRATE.HKL',
                      'FILTER.HKL',
