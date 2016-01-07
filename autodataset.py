@@ -23,6 +23,7 @@ group = parser.add_mutually_exclusive_group(required=True)
 group.add_argument('--collection_id')
 group.add_argument('--dataset_id')
 parser.add_argument('--data_dir')
+parser.add_argument('--output_dir')
 
 for clz in set([obj.__class__ for obj in chain(*pipelines.pipelines.values())]):
     try:

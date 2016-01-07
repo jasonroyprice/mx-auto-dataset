@@ -12,9 +12,10 @@ setup(get_database(staging=True))
 parser = argparse.ArgumentParser()
 parser.add_argument("--dataset_id", help="dataset ID")
 parser.add_argument("--data_dir", help="top-level directory name (like /data for most data)")
+parser.add_argument("--output_dir", help="place where processing results are put")
 args = parser.parse_args()
 if not args.dataset_id:
     import sys
     sys.exit("no dataset ID provided, aborting")
-job = dataset.delay(dataset_id=unicode(args.dataset_id), data_dir=unicode(args.data_dir))
+job = dataset.delay(dataset_id=unicode(args.dataset_id), data_dir=unicode(args.data_dir), output_dir=unicode(args.output_dir))
 logger.info('Queued dataset job with id = %s' % (job,))

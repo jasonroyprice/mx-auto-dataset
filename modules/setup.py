@@ -7,6 +7,8 @@ from beamline import variables as blconfig
 
 from .base import Base
 
+from utils import create_auto_dir_from_last_frame, replace_top_directory_level
+
 #def folder_from_dataset(dataset):
 #    _, filename = os.path.split(dataset.last_frame)
 #    return "%s_%s" % (filename, dataset._id)
@@ -31,7 +33,17 @@ class Setup(Base):
         self.output.project = "%s_%s" % (filename, self.dataset._id)
 
         # set project dir
-        default_base_dir = os.path.join(blconfig.AUTO_DIR, 'dataset')
+        base_dir = blconfig.AUTO_DIR
+        data_dir = kwargs.get('data_dir')
+        output_dir = kwargs.get('output_dir')
+
+        if data_dir and not output_dir:
+            base_dir = create_auto_dir_from_last_frame(replace_top_directory_level(self.dataset.last_frame, data_dir))
+
+        elif output_dir:
+            base_dir = create_auto_dir_from_last_frame(replace_top_directory_level(self.dataset.last_frame, output_dir))
+
+        default_base_dir = os.path.join(base_dir, 'dataset')
         self.output.base_dir = kwargs.get('base_dir', default_base_dir)
         self.output.project_dir = os.path.join(self.output.base_dir, 'xds_process_%s' % (self.output.project,))
 
