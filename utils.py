@@ -52,7 +52,12 @@ def create_auto_dir_from_last_frame(last_frame):
         found_epn = re.findall(p, last_frame)[0]
         import os
         last_part = dirsplit[1].split(os.sep)
-        combined = os.path.join(dirsplit[0], found_epn, "home", last_part[1], "auto")
+        if last_part[1] == "frames":
+            combined = os.path.join(dirsplit[0], found_epn, "home", last_part[2], "auto")
+        else: # /data/home/EPN/...
+            dirfront = dirsplit[0].split(os.sep)
+            to_combine = os.path.join(os.sep, *dirfront[1:-2]), found_epn, "home", last_part[1], "auto"
+            combined = os.path.join(*to_combine)
         return combined
 
 
