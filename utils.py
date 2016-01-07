@@ -42,3 +42,17 @@ def replace_top_directory_level(full_path, data_dir):
         else:
             combined= os.path.join(data_dir,found_epn, *last_part)
         return combined
+
+def create_auto_dir_from_last_frame(last_frame):
+    # general structure of last_frame is /data/$EPN/home/PI. We must add auto after the PI
+    import re
+    p=re.compile('[1-9][0-9]{2,5}[a-z]{0,1}(?!ays)') #regex for EPN - a bunch of numbers plus up to one letter
+    if p.search(last_frame):
+        dirsplit = re.split(p, last_frame, 1)
+        found_epn = re.findall(p, last_frame)[0]
+        import os
+        last_part = dirsplit[1].split(os.sep)
+        combined = os.path.join(dirsplit[0], found_epn, "home", last_part[1], "auto")
+        return combined
+
+
