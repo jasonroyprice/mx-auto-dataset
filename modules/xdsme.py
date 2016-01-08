@@ -26,10 +26,13 @@ class XDSme(Base):
         parser.add_argument('--weak')
         parser.add_argument('--slow')
         parser.add_argument('--brute')
+        parser.add_argument('--unit_cell')
+        parser.add_argument('--space_group')
 
     def process(self, first_frame, last_frame,
                 low_resolution, high_resolution,
                 ice, weak, slow, brute,
+                unit_cell, space_group,
                 **kwargs):
         self.dataset.status = "XDS %s" % self.run_name
         self.dataset.save()
@@ -45,6 +48,11 @@ class XDSme(Base):
             extra.extend(['-R', low_resolution])
         if high_resolution:
             extra.extend(['-r', high_resolution])
+
+        if unit_cell:
+            extra.extend(['-c', unit_cell])
+        if space_group:
+            extra.extend(['-s', space_group])
 
         if ice:
             extra.extend(['--ice'])
