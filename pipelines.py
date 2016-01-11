@@ -19,5 +19,7 @@ reprocess = list(default)
 reprocess[1] = XDSme('hsymm', '-5', '-a')
 reprocess.insert(1, Retrigger())
 
+# for weak, brute, slow, ice options, go from the beginning
+reprocess_from_start = list(default)
 
 pipelines = dict(filter(lambda x: isinstance(x[1], list), locals().iteritems()))
