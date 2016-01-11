@@ -49,10 +49,11 @@ class XDSme(Base):
         if high_resolution:
             extra.extend(['-r', high_resolution])
 
-        if unit_cell:
-            extra.extend(['-c', unit_cell])
-        if space_group:
-            extra.extend(['-s', space_group])
+        if not self.p1:
+            if unit_cell:
+                extra.extend(['-c', unit_cell])
+            if space_group:
+                extra.extend(['-s', space_group])
 
         if ice:
             extra.extend(['--ice'])
