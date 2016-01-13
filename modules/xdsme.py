@@ -26,10 +26,13 @@ class XDSme(Base):
         parser.add_argument('--weak')
         parser.add_argument('--slow')
         parser.add_argument('--brute')
+        parser.add_argument('--unit_cell')
+        parser.add_argument('--space_group')
 
     def process(self, first_frame, last_frame,
                 low_resolution, high_resolution,
                 ice, weak, slow, brute,
+                unit_cell, space_group,
                 **kwargs):
         self.dataset.status = "XDS %s" % self.run_name
         self.dataset.save()
@@ -45,6 +48,12 @@ class XDSme(Base):
             extra.extend(['-R', low_resolution])
         if high_resolution:
             extra.extend(['-r', high_resolution])
+
+        if not self.p1:
+            if unit_cell:
+                extra.extend(['-c', unit_cell])
+            if space_group:
+                extra.extend(['-s', space_group])
 
         if ice:
             extra.extend(['--ice'])
@@ -95,10 +104,18 @@ class XDSme(Base):
 
 
     def __get_cell_and_sg(self):
-        with open(os.path.join(self.project_dir, 'INTEGRATE.HKL')) as f:
+        with open(os.path.join(self.project_dir, 'IDXREF.LP')) as f:
+            numbersgstring = 0 #look for second SPACE GROUP NUMBER before parsing
+
+            sgstring = 'SPACE GROUP NUMBER'
+            ucstring = 'UNIT CELL PARAMETERS'
+
             for line in f:
-                if 'SPACE_GROUP_NUMBER' in line:
-                    sg = line.split('=')[1].strip()
-                if 'UNIT_CELL_CONSTANTS' in line:
-                    cell = ' '.join(line.split('=')[1].split())
+                if sgstring in line:
+                    numbersgstring += 1
+                if numbersgstring == 2:
+                    if sgstring in line:
+                        sg = line.split(sgstring)[1].split()[0]
+                    if ucstring in line:
+                        cell = ' '.join(line.split(ucstring)[1].split())
         return sg, cell

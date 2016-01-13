@@ -53,15 +53,32 @@ class Setup(Base):
 
 
 class Retrigger(Base):
-    def process(self, **kwargs):
-        os.makedirs(self.project_dir)
-
-        for item in ('INTEGRATE.HKL',
+    def __init__(self, stepnumber = 5):
+        super(Retrigger, self).__init__()
+        self.stepnumber = stepnumber
+    def file_lists(self, stepnumber):
+        if stepnumber == 5:
+            linkfiles = ['INTEGRATE.HKL',
                      'FILTER.HKL',
                      'REMOVE.HKL',
                      'X-CORRECTIONS.cbf',
+                     'Y-CORRECTIONS.cbf']
+            return linkfiles, ''
+        elif stepnumber == 3:
+            linkfiles = ['INTEGRATE.LP',
+                     'INTEGRATE.HKL',
+                     'X-CORRECTIONS.cbf',
                      'Y-CORRECTIONS.cbf',
-                     'XPARM.XDS'):
+                     'BKGINIT.cbf',
+                     'GAIN.cbf']
+            copyfiles = ['SPOT.XDS']
+            return linkfiles, copyfiles
+    def process(self, **kwargs):
+        linkfiles, copyfiles = self.file_lists(self.stepnumber)
+        os.makedirs(self.project_dir)
+
+        # many files just need to be linked to the old directory - they are only read
+        for item in (linkfiles):
             src = os.path.join(self.from_dataset.processing_dir, item)
             dst = os.path.join(self.project_dir, item)
             
@@ -69,3 +86,9 @@ class Retrigger(Base):
                 os.symlink(src,dst)
             except:
                 print "warning, %s to %s symlink could not be made" % (src, dst)
+
+        # some files may need to be copied because they are re-written
+        import shutil
+        for item in (copyfiles):
+            shutil.copyfile(os.path.join(self.from_dataset.processing_dir, item), \
+                os.path.join(self.project_dir, item))
