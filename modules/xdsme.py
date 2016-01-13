@@ -104,10 +104,18 @@ class XDSme(Base):
 
 
     def __get_cell_and_sg(self):
-        with open(os.path.join(self.project_dir, 'INTEGRATE.HKL')) as f:
+        with open(os.path.join(self.project_dir, 'IDXREF.LP')) as f:
+            numbersgstring = 0 #look for second SPACE GROUP NUMBER before parsing
+
+            sgstring = 'SPACE GROUP NUMBER'
+            ucstring = 'UNIT CELL PARAMETERS'
+
             for line in f:
-                if 'SPACE_GROUP_NUMBER' in line:
-                    sg = line.split('=')[1].strip()
-                if 'UNIT_CELL_CONSTANTS' in line:
-                    cell = ' '.join(line.split('=')[1].split())
+                if sgstring in line:
+                    numbersgstring += 1
+                if numbersgstring == 2:
+                    if sgstring in line:
+                        sg = line.split(sgstring)[1].split()[0]
+                    if ucstring in line:
+                        cell = ' '.join(line.split(ucstring)[1].split())
         return sg, cell

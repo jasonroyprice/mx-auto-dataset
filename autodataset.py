@@ -57,6 +57,8 @@ if options.dataset_id:
     #pipeline = pipelines.default
     if options.ice or options.weak or options.slow or options.brute:
         pipeline = pipelines.reprocess_from_start
+    elif options.unit_cell and options.space_group:
+        pipeline = pipelines.reprocess_ucsg
     else:
         pipeline = pipelines.reprocess
     _input.from_dataset = Dataset(options.dataset_id)
