@@ -31,6 +31,10 @@ class Pointless(Process):
     def __init__(self, run_name, *args, **kwargs):
         super(Pointless, self).__init__()
         self.run_name = run_name
+        if kwargs.get('nonchiral') == True:
+            self.stdin = ['chirality nonchiral']
+        else:
+            self.stdin = []
 
     def process(self, **kwargs):
         super(Pointless, self).process(**kwargs)
@@ -40,8 +44,7 @@ class Pointless(Process):
         hklout = 'pointless_%s.mtz' % self.run_name
 
         args = ['pointless', 'XDSIN', xdsin, 'HKLOUT', hklout]
-        stdin = []
-        self.run_process(stdin, args)
+        self.run_process(self.stdin, args)
         
 class Aimless(Process):
     def __init__(self, run_name, *args, **kwargs):

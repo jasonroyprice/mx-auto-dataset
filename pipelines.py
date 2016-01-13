@@ -3,12 +3,17 @@ from modules.xdsme import XDSme
 from modules.ccp4 import Pointless, Aimless, Truncate
 
 def default_pipeline(base):
+    from beamline import redis as BLredis
+    if int(BLredis.get('SMX')) == 1:
+        po = Pointless(base, nonchiral=True)
+    else:
+        po = Pointless(base)
     return [
     Setup(),
     XDSme(base, '-a'),
     XDSme('p1', '-5', '-a', p1=True),
     XDSme(base+'_NOANOM', '-5'),
-    Pointless(base),
+    po,
     Aimless(base),
     Truncate(base)
 ]
