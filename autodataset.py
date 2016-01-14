@@ -6,8 +6,6 @@ import argparse
 import logbook
 
 from itertools import chain
-#loghandle = logbook.FileHandler('/tmp/test.log', bubble=True)
-#loghandle.push_application()
 
 logger = logbook.Logger('MAIN')
 
@@ -25,6 +23,7 @@ group.add_argument('--dataset_id')
 parser.add_argument('--data_dir')
 parser.add_argument('--output_dir')
 
+# add parser arguments from all classes inside the pipelines
 for clz in set([obj.__class__ for obj in chain(*pipelines.pipelines.values())]):
     try:
         clz.add_args(parser)
@@ -33,28 +32,11 @@ for clz in set([obj.__class__ for obj in chain(*pipelines.pipelines.values())]):
 
 options, unknown_args = parser.parse_known_args()
 
-### process unknown args
-#kwargs = {}
-#for arg in unknown_args:
-#    if arg.startswith('--'): # O
-#        opt = arg[2:]
-#        kwargs[opt] = []
-#    else: # V
-#        kwargs[opt].append(arg)
-#
-### remove list from single value args
-#for k,v in kwargs.iteritems():
-#    if len(v) == 1:
-#        kwargs[k] = v[0]
-#
-#kwargs.update(vars(options))
-
 class Container(object): pass
 output = Container()
 _input = Container()
 
 if options.dataset_id:
-    #pipeline = pipelines.default
     if options.ice or options.weak or options.slow or options.brute:
         pipeline = pipelines.reprocess_from_start
     elif options.unit_cell and options.space_group:
