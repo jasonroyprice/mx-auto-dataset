@@ -22,6 +22,7 @@ group.add_argument('--collection_id')
 group.add_argument('--dataset_id')
 parser.add_argument('--data_dir')
 parser.add_argument('--output_dir')
+parser.add_argument('--processing_dir', help="Location of previously run processing directory")
 
 # add parser arguments from all classes inside the pipelines
 for clz in set([obj.__class__ for obj in chain(*pipelines.pipelines.values())]):
@@ -59,6 +60,11 @@ if options.data_dir != None:
     output.dataset.last_frame = last_frame
     output.dataset.directory = replace_top_directory_level(output.dataset.directory, options.data_dir)
     _input.from_dataset.processing_dir = replace_top_directory_level(_input.from_dataset.processing_dir, options.data_dir)
+
+# if processing_dir is further specified, use it
+if options.processing_dir != None:
+    _input.from_dataset.processing_dir = replace_top_directory_level(_input.from_dataset.processing_dir,
+                                                                     options.processing_dir)
 
 if not os.path.isfile(output.dataset.last_frame):
     logger.error("File %s does not exist" % output.dataset.last_frame)
