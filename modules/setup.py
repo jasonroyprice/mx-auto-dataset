@@ -7,7 +7,7 @@ from beamline import variables as blconfig
 
 from .base import Base
 
-from utils import create_auto_dir_from_last_frame, replace_top_directory_level
+from utils import create_auto_dir_from_last_frame, replace_top_directory_level, get_epn
 
 #def folder_from_dataset(dataset):
 #    _, filename = os.path.split(dataset.last_frame)
@@ -33,7 +33,10 @@ class Setup(Base):
         self.output.project = "%s_%s" % (filename, self.dataset._id)
 
         # set project dir
-        base_dir = blconfig.AUTO_DIR
+        if get_epn(self.dataset.last_frame) == blconfig.EPN:
+            base_dir = blconfig.AUTO_DIR
+        else: # re-trigger back into previous EPN's directory if we're not looking at current data
+            base_dir = create_auto_dir_from_last_frame(self.input.from_dataset.processing_dir)
         data_dir = kwargs.get('data_dir')
         output_dir = kwargs.get('output_dir')
 
