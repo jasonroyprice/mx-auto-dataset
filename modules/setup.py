@@ -61,11 +61,13 @@ class Retrigger(Base):
         self.stepnumber = stepnumber
     def file_lists(self, stepnumber):
         if stepnumber == 5:
-            linkfiles = ['INTEGRATE.HKL',
+            linkfiles = ['IDXREF.LP',
+                     'INTEGRATE.HKL',
                      'FILTER.HKL',
                      'REMOVE.HKL',
                      'X-CORRECTIONS.cbf',
-                     'Y-CORRECTIONS.cbf']
+                     'Y-CORRECTIONS.cbf',
+                     'XPARM.XDS']
             return linkfiles, ''
         elif stepnumber == 3:
             linkfiles = ['INTEGRATE.LP',
@@ -74,7 +76,8 @@ class Retrigger(Base):
                      'Y-CORRECTIONS.cbf',
                      'BKGINIT.cbf',
                      'GAIN.cbf']
-            copyfiles = ['SPOT.XDS']
+            copyfiles = ['SPOT.XDS',
+                     'XPARM.XDS']
             return linkfiles, copyfiles
     def process(self, **kwargs):
         linkfiles, copyfiles = self.file_lists(self.stepnumber)
