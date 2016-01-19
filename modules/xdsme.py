@@ -3,6 +3,9 @@ from subprocess import call, check_output
 import os
 import shutil
 
+class Trigger(dict):
+    pass
+
 class XDSme(Base):
     XDS_INPUT = ['SENSOR_THICKNESS= 0.01']
 
@@ -39,15 +42,20 @@ class XDSme(Base):
 
         extra = []
 
+        retrigger = Trigger()
         if first_frame:
             extra.extend(['-F', first_frame])
+            retrigger['first_frame'] = int(first_frame)
         if last_frame:
             extra.extend(['-L', last_frame])
+            retrigger['last_frame'] = int(last_frame)
 
         if low_resolution:
             extra.extend(['-R', low_resolution])
+            retrigger['low_resolution'] = float(low_resolution)
         if high_resolution:
             extra.extend(['-r', high_resolution])
+            retrigger['high_resolution'] = float(high_resolution)
 
         if not self.p1:
             if unit_cell:
@@ -55,14 +63,27 @@ class XDSme(Base):
             if space_group:
                 extra.extend(['-s', space_group])
 
+        if unit_cell:
+            retrigger['unit_cell'] = unit_cell
+        if space_group:
+            retrigger['space_group'] = space_group
+
         if ice:
             extra.extend(['--ice'])
+            retrigger['ice'] = True
         if weak:
             extra.extend(['--weak'])
+            retrigger['weak'] = True
         if slow:
             extra.extend(['--slow'])
+            retrigger['slow'] = True
         if brute:
             extra.extend(['--brute'])
+            retrigger['brute'] = True
+
+        if retrigger:
+            self.dataset.retrigger = retrigger
+            self.dataset.save()
 
         self.run_xdsme(extra)
         self.move_files()
