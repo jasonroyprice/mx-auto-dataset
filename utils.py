@@ -32,10 +32,17 @@ def replace_top_directory_level(full_path, data_dir):
         combined = os.path.join(data_dir, *last_part)
         return combined
     p=re.compile('[1-9][0-9]{2,5}[a-z]{0,1}(?!ays)') #regex for EPN - a bunch of numbers plus up to one letter
-    matched= p.search(full_path)
-    if matched:
-        dirsplit = re.split(p, full_path,1)
-        found_epn = re.findall(p, full_path)[0]
+    p2=re.compile('MX[12]cal2[0-9]{7}[a-z]{0,1}') #regex for MX cal visits
+    psearch= p.search(full_path)
+    p2search= p2.search(full_path)
+    if psearch or p2search:
+        if p2search:
+            successful_search = p2
+        else:
+            successful_search = p
+
+        dirsplit = re.split(successful_search, full_path,1)
+        found_epn = re.findall(successful_search, full_path)[0]
         last_part=dirsplit[1].split(os.sep)
         if use_full_path:
             combined = os.path.join(data_dir, found_epn, "home", *last_part)
@@ -46,10 +53,18 @@ def replace_top_directory_level(full_path, data_dir):
 def create_auto_dir_from_last_frame(last_frame):
     # general structure of last_frame is /data/$EPN/home/PI. We must add auto after the PI
     import re
-    p=re.compile('[1-9][0-9]{2,5}[a-z]{0,1}(?!ays)') #regex for EPN - a bunch of numbers plus up to one letter
-    if p.search(last_frame):
-        dirsplit = re.split(p, last_frame, 1)
-        found_epn = re.findall(p, last_frame)[0]
+    p=re.compile('[1-9][0-9]{2,5}[a-z]{0,1}(?!ays)') #regex for normal EPN - a bunch of numbers plus up to one letter
+    p2=re.compile('MX[12]cal2{1}[0-9]{7}[a-z]{0,1}') #regex for MX cal visits
+
+    psearch = p.search(last_frame)
+    p2search = p2.search(last_frame)
+    if psearch or p2search:
+        if p2search:
+            successful_search = p2
+        else:
+            successful_search = p
+        dirsplit = re.split(successful_search, last_frame, 1)
+        found_epn = re.findall(successful_search, last_frame)[0]
         import os
         last_part = dirsplit[1].split(os.sep)
         if last_part[1] == "frames":
@@ -66,7 +81,7 @@ def get_epn(last_frame):
     if p.search(last_frame):
         found_epn = re.findall(p, last_frame)[0]
         return found_epn
-    p=re.compile('MX[12]cal2') #regex for MX cal visits
+    p=re.compile('MX[12]cal2[0-9]{7}[a-z]{0,1}') #regex for MX cal visits
     if p.search(last_frame):
         found_epn = re.findall(p, last_frame)[0]
         return found_epn

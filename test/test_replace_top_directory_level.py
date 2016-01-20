@@ -23,5 +23,11 @@ class TestReplaceTopDirectoryLevel(unittest.TestCase):
         result = replace_top_directory_level(test_dir, data_dir)
         self.assertTrue(result == "/sans/60days/10123g/home/calibration/test_crystal/testcrystal_1_180.img")
 
+    def test4(self):
+        test_dir  = "/data/home/MX1cal20150115k/calibration/test_crystal/testcrystal_1_180.img"
+        data_dir = "/sans/60days"
+        result = replace_top_directory_level(test_dir, data_dir)
+        self.assertTrue(result == "/sans/60days/MX1cal20150115k/home/calibration/test_crystal/testcrystal_1_180.img")
+
 if __name__ == '__main__':
     unittest.main()
