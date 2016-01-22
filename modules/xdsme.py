@@ -59,7 +59,11 @@ class XDSme(Base):
 
         if not self.p1:
             if unit_cell:
-                extra.extend(['-c', unit_cell])
+                parms = unit_cell[1:-1].split(',')
+                cell = ''
+                for parm in parms:
+                    cell += parm.strip() + " "
+                extra.extend(['-c', cell])
             if space_group:
                 extra.extend(['-s', space_group])
 
