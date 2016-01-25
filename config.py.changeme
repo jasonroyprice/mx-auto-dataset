@@ -1,0 +1,5 @@
+__author__ = 'aishimaj'
+
+REDIS_QUEUE_NAME="autodataset"
+PIPELINE_NAME="PRODUCTION"
+IS_STAGING=False

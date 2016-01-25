@@ -2,6 +2,7 @@
 import os
 import sys
 import argparse
+from config import IS_STAGING
 
 import logbook
 
@@ -14,7 +15,7 @@ import pipelines
 from beamline import variables as blconfig
 
 from processing.models import setup, Dataset
-setup(blconfig.get_database(staging=True))
+setup(blconfig.get_database(staging=IS_STAGING))
 
 parser = argparse.ArgumentParser()
 group = parser.add_mutually_exclusive_group(required=True)
