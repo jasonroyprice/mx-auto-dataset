@@ -48,6 +48,8 @@ class Setup(Base):
 
         default_base_dir = os.path.join(base_dir, 'dataset')
         self.output.base_dir = kwargs.get('base_dir', default_base_dir)
+        if not os.path.exists(self.output.base_dir):
+            os.makedirs(self.output.base_dir)
         self.output.project_dir = os.path.join(self.output.base_dir, 'xds_process_%s' % (self.output.project,))
 
         self.dataset.processing_dir = self.project_dir
