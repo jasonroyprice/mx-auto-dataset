@@ -6,10 +6,10 @@ import config
 @job(config.REDIS_QUEUE_NAME, connection=redis, timeout=1800)
 def dataset(*args, **kwargs):
     print "RUNNING %s AUTODATASET" % config.PIPELINE_NAME
-    cmd = ['/xray/progs/Python/libraries/mx-auto-dataset/autodataset.sh']
+    cmd = ['/xray/progs/Python/libraries/mx_auto_dataset/autodataset.sh']
 
     for key, value in kwargs.iteritems():
         cmd.append("--%s" % key)
         cmd.append(str(value))
 
-    call(cmd, cwd='/scratch')
+    call(cmd, cwd='/tmp')
