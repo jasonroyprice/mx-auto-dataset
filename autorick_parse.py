@@ -143,10 +143,7 @@ if diff > 1 or max_anon_row > 1 or m < 1:
     print "Data does not met requirements for automatic Autorickshaw launch for SAD phasing."
     sys.exit(0)
     
-if redis.get(newkey):
-    print "Anom present. Setting redis key"
-    redis.set(newkey,json.dumps('on'))
-
+print "Anom present but not setting redis key for SHELX processing"
 
 # setup directory
 directory = os.path.join(beamline.variables.AUTO_DIR, 'rickshaw')
