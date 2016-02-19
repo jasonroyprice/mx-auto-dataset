@@ -1,6 +1,7 @@
 from modules.setup import Setup, Retrigger
 from modules.xdsme import XDSme
 from modules.ccp4 import Pointless, Aimless, Truncate
+from modules.other import Autorickshaw
 
 def default_pipeline(base):
     from beamline import redis as BLredis
@@ -15,7 +16,8 @@ def default_pipeline(base):
     XDSme(base+'_NOANOM', '-5'),
     po,
     Aimless(base),
-    Truncate(base)
+    Truncate(base),
+    Autorickshaw(base)
 ]
 
 base = 'hsymm'
