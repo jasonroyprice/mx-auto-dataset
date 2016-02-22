@@ -9,6 +9,9 @@ import logbook
 from itertools import chain
 
 logger = logbook.Logger('MAIN')
+logger.StreamHandler(sys.stdout).push_application()
+logger.set_datetime_format("local")
+
 
 # load modules
 import pipelines
