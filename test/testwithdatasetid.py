@@ -3,11 +3,11 @@ logger = logbook.Logger(__name__)
 
 __author__ = 'aishimaj'
 from beamline import get_database
-from mx_auto_dataset import dataset
+from mx_auto_dataset.mx_auto_dataset import dataset
 from processing.models import setup
 import argparse
 
-setup(get_database(staging=True))
+setup(get_database(staging=False))
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--dataset_id", help="dataset ID")
