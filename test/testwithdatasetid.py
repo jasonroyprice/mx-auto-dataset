@@ -7,8 +7,6 @@ from mx_auto_dataset.mx_auto_dataset import dataset
 from processing.models import setup
 import argparse
 
-setup(get_database(staging=False))
-
 parser = argparse.ArgumentParser()
 parser.add_argument("--dataset_id", help="dataset ID")
 parser.add_argument("--data_dir", help="top-level directory name (like /data for most data)")
@@ -23,8 +21,11 @@ parser.add_argument('--ice', default='')
 parser.add_argument('--weak', default='')
 parser.add_argument('--slow', default='')
 parser.add_argument('--brute', default='')
+parser.add_argument('--staging', type=bool, default=False)
 
 args = parser.parse_args()
+setup(get_database(staging=args.staging))
+
 if not args.dataset_id:
     import sys
     sys.exit("no dataset ID provided, aborting")
