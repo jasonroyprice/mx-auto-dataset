@@ -36,7 +36,7 @@ class Setup(Base):
         if get_epn(self.dataset.last_frame) == blconfig.EPN:
             base_dir = blconfig.AUTO_DIR
         else: # re-trigger back into previous EPN's directory if we're not looking at current data
-            base_dir = create_auto_dir_from_last_frame(self.input.from_dataset.processing_dir)
+            base_dir = create_auto_dir_from_last_frame(self.input.from_dataset.last_frame)
         data_dir = kwargs.get('data_dir')
         output_dir = kwargs.get('output_dir')
 
