@@ -1,6 +1,7 @@
 __author__ = 'aishimaj'
 
 from ccp4 import Process
+from subprocess import call
 
 class Autorickshaw(Process):
     def __init__(self, run_name, *args, **kwargs):
@@ -10,6 +11,6 @@ class Autorickshaw(Process):
     def process(self, **kwargs):
         super(Autorickshaw, self).process(**kwargs)
 
-        args = ['python2.7', '/xray/progs/Python/libraries/mx_auto_dataset/autorick_parse.py', 'cwd=' + self.project_dir]
+        args = ['python2.7', '/xray/progs/Python/libraries/mx_auto_dataset/autorick_parse.py']
 
-        self.run_process(self.stdin, args)
+        call(args, cwd=self.project_dir)
