@@ -11,7 +11,6 @@ except (ValueError, TypeError):
 import re, subprocess, tempfile, os, beamline
 from xml.etree import ElementTree
 from beamline import redis as redis
-from beamline import variables as mxvars
 import json
 
 # hack to get new dir for autorickshaw
@@ -50,7 +49,7 @@ except EnvironmentError:
 
 if runall():
     try:
-        newdir = "%s/rickshaw/%s/" % (mxvars.AUTO_DIR,runall())
+        newdir = "%s/rickshaw/%s/" % (os.path.sep.join(pathsplit()[:-2]),runall())
         os.makedirs(newdir)
         os.symlink(newdir,'AR')
     except EnvironmentError:
@@ -146,7 +145,7 @@ if diff > 1 or max_anon_row > 1 or m < 1:
 print "Anom present but not setting redis key for SHELX processing"
 
 # setup directory
-directory = os.path.join(beamline.variables.AUTO_DIR, 'rickshaw')
+directory = os.path.join(os.path.sep.join(pathsplit()[:-2]), 'rickshaw')
 try:
     os.makedirs(directory)
 except EnvironmentError:
@@ -162,10 +161,7 @@ cad_out = "%s/output.mtz" % newdir
 mtz2sca_in = os.path.splitext("aimless_hsymm.mtz")[0]
 
 pointless_in = "%s.sca" % mtz2sca_in
-pointless_xmlout = '%s/pointless_output.xml' % newdir
-
-# pointless
-subprocess.check_output(['pointless', 'XDSIN', hkl_file, 'XMLOUT', pointless_xmlout], stderr=subprocess.STDOUT)
+pointless_xmlout = '%s/XDS_pointless.xml' % os.getcwd()
 
 # harvest SG
 tree = ElementTree.parse(pointless_xmlout)
