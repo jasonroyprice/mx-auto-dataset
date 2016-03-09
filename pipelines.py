@@ -11,9 +11,9 @@ def default_pipeline(base):
         po = Pointless(base)
     return [
     Setup(),
-    XDSme(base, '-a'),
-    XDSme('p1', '-5', '-a', p1=True),
-    XDSme(base+'_NOANOM', '-5'),
+    XDSme(base, '--weak', '-a'),
+    XDSme('p1', '-5', '--weak', '-a', p1=True),
+    XDSme(base+'_NOANOM', '-5', '--weak'),
     po,
     Aimless(base),
     Truncate(base),
