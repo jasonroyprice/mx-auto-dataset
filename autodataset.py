@@ -38,6 +38,7 @@ for clz in set([obj.__class__ for obj in chain(*pipelines.pipelines.values())]):
         pass
 
 options, unknown_args = parser.parse_known_args()
+options_dict = vars(options)
 
 class Container(object): pass
 output = Container()
@@ -56,6 +57,7 @@ if options.dataset_id:
 elif options.collection_id:
     pipeline = pipelines.default
     collection_id = options.collection_id
+    options_dict['weak'] = u'weak' #for processing data from data collections, always use weak
 
 output.dataset = Dataset.create_from_collection(collection_id)
 
@@ -76,7 +78,6 @@ if not os.path.isfile(output.dataset.last_frame):
     logger.error("File %s does not exist" % output.dataset.last_frame)
     sys.exit(1)
 
-options_dict = vars(options)
 
 for obj in pipeline:
     logger.info("------ RUNNING: %s ------" % obj)
