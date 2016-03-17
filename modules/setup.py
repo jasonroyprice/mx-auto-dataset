@@ -7,7 +7,9 @@ from beamline import variables as blconfig
 
 from .base import Base
 
-from utils import create_auto_dir_from_last_frame, replace_top_directory_level, get_epn
+from utils import create_auto_dir_from_last_frame, replace_top_directory_level, get_epn, get_valid_filenames
+
+from processing.models import Collection
 
 #def folder_from_dataset(dataset):
 #    _, filename = os.path.split(dataset.last_frame)
@@ -28,7 +30,10 @@ class Setup(Base):
         spec = os.path.join(path, "%s*%s" % (prefix, ext))
 
         # set image list and project
-        self.output.images = sorted(glob.glob(spec))
+        collection = Collection(self.dataset.collection_id.id)
+        self.output.images = get_valid_filenames(int(collection.start_frame),
+                                                 int(collection.no_frames) + int(collection.start_frame), path, prefix,
+                                                 ext)
         #self.output.project = "%s_%d" % (filename, os.stat(dataset.last_frame).st_ctime)
         self.output.project = "%s_%s" % (filename, self.dataset._id)
 
