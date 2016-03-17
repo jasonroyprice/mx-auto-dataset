@@ -77,7 +77,7 @@ def get_valid_filenames(start, end, path, prefix, ext):
     import glob
     filenames = []
     for filenum in xrange(start, end+1):
-        spec = os.path.join(path, "%s*%s*%s" % (prefix, str(filenum), ext))
+        spec = os.path.join(path, "%s*%03d*%s" % (prefix, filenum, ext))
         filename = glob.glob(spec)
         if filename:
             filenames.append(filename[0])
