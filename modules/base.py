@@ -18,3 +18,7 @@ class Base(object):
             return getattr(self.input, attr)
         except AttributeError:
             return getattr(self.output, attr)
+
+#define a class for when we expect process to return an updated list of options
+class ReturnOptions(Base):
+    pass

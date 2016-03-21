@@ -8,6 +8,8 @@ import logbook
 
 from itertools import chain
 
+from modules.base import ReturnOptions
+
 logger = logbook.Logger('MAIN')
 logbook.StreamHandler(sys.stdout).push_application()
 logbook.set_datetime_format("local")
@@ -76,12 +78,16 @@ if not os.path.isfile(output.dataset.last_frame):
     logger.error("File %s does not exist" % output.dataset.last_frame)
     sys.exit(1)
 
+
 for obj in pipeline:
     logger.info("------ RUNNING: %s ------" % obj)
     try:
         obj.input = _input
         obj.output = output
-        obj.process(**vars(options))
+        if isinstance(obj, ReturnOptions):
+            options_dict = obj.process(**options_dict)
+        else:
+            obj.process(**options_dict)
     except Exception, e:
         logger.error("Failed to run %s: [%s] %s" % (obj.__class__.__name__, e.__class__.__name__, e.message))
         import traceback

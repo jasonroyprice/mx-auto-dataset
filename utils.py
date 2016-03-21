@@ -72,7 +72,13 @@ def get_epn_and_split(last_frame):
 def get_epn(last_frame):
     return get_epn_and_split(last_frame)[0]
 
-
-
-
-
+def get_valid_filenames(start, end, path, prefix, ext):
+    import os
+    import glob
+    filenames = []
+    for filenum in xrange(start, end+1):
+        spec = os.path.join(path, "%s*%03d*%s" % (prefix, filenum, ext))
+        filename = glob.glob(spec)
+        if filename:
+            filenames.append(filename[0])
+    return filenames

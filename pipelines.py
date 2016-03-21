@@ -1,7 +1,7 @@
 from modules.setup import Setup, Retrigger
 from modules.xdsme import XDSme
 from modules.ccp4 import Pointless, Aimless, Truncate
-from modules.other import Autorickshaw
+from modules.other import Autorickshaw, CornerResolution
 
 def default_pipeline(base):
     from beamline import redis as BLredis
@@ -37,5 +37,9 @@ reprocess_ucsg.insert(1, Retrigger(3))
 
 # for weak, brute, slow, ice options, go from the beginning
 reprocess_from_start = list(default)
+
+from beamline import redis as BLredis
+if int (BLredis.get('SMX')) == 1:
+    default.insert(1, CornerResolution(base))
 
 pipelines = dict(filter(lambda x: isinstance(x[1], list), locals().iteritems()))
