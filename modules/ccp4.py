@@ -7,9 +7,10 @@ from custom_parser import get_summary
 class Process(Base):
     def process(self, **kwargs):
         super(Process, self).process(**kwargs)
-        
-        self.dataset.status = self.__class__.__name__
-        self.dataset.save()
+
+        if not kwargs.get('no_harvest'):
+            self.dataset.status = self.__class__.__name__
+            self.dataset.save()
 
     def __write_logfile(self, process, output):
         logfile = os.path.join(self.project_dir, "%s.log" % process)
@@ -31,6 +32,9 @@ class Pointless(Process):
     def __init__(self, run_name, *args, **kwargs):
         super(Pointless, self).__init__()
         self.run_name = run_name
+        if kwargs.get('project_dir'):
+            print "setting project_dir"
+            self.project_dir = kwargs.get('project_dir')
         if kwargs.get('nonchiral') == True:
             self.stdin = ['chirality nonchiral']
         else:
@@ -40,7 +44,11 @@ class Pointless(Process):
         super(Pointless, self).process(**kwargs)
         
         #xdsin = os.path.basename(getattr(self, 'xds_%s' % self.run_name))
-        xdsin = 'XDS_ASCII.HKL_%s' % self.run_name
+        input_filename = kwargs.get('input_filename')
+        if input_filename:
+            xdsin = input_filename
+        else:
+            xdsin = 'XDS_ASCII.HKL_%s' % self.run_name
         hklout = 'pointless_%s.mtz' % self.run_name
 
         args = ['pointless', 'XDSIN', xdsin, 'HKLOUT', hklout]
@@ -50,6 +58,8 @@ class Aimless(Process):
     def __init__(self, run_name, *args, **kwargs):
         super(Aimless, self).__init__()
         self.run_name = run_name
+        if kwargs.get('project_dir'):
+            self.project_dir = kwargs.get('project_dir')
 
     def process(self, **kwargs):
         super(Aimless, self).process(**kwargs)
@@ -58,13 +68,22 @@ class Aimless(Process):
         hklout = 'aimless_%s.mtz' % self.run_name
 
         args = ['aimless', 'HKLIN', hklin, 'HKLOUT', hklout]
-        stdin = ["run 1 all",
+        if kwargs.get('constant_scales') == True:
+            stdin =  ["run 1 all",
+                      "scales constant",
+                    "cycles 20",
+                    "anomalous on",
+                     "sdcorrection 1.3 0.02",
+                     "reject 4", ""]
+        else:
+            stdin = ["run 1 all",
                 "cycles 20",
                 "anomalous on",
                 "sdcorrection 1.3 0.02",
                 "reject 4", ""]
         self.run_process(stdin, args)
-        self.harvest()
+        if not kwargs.get('no_harvest'):
+            self.harvest()
 
     def harvest(self):
         logfile = os.path.join(self.project_dir, 'aimless.log')
