@@ -55,8 +55,8 @@ def create_auto_dir_from_last_frame(last_frame):
 
 def get_epn_and_split(last_frame):
     import re
-    p=re.compile('MX[12]cal2[0-9]{7}[a-z]{0,1}') #regex for MX cal visits
-    p2=re.compile('[1-9][0-9]{2,5}[a-z]{0,1}(?!ays)') #regex for EPN - a bunch of numbers plus up to one letter
+    p=re.compile('MX[12]cal2[0-9]{7}[a-z]{0,}') #regex for MX cal visits
+    p2=re.compile('[1-9][0-9]{2,5}[a-z]{0,}(?!ays)') #regex for EPN - a bunch of numbers plus up to one letter
 
     psearch = p.search(last_frame)
     p2search = p2.search(last_frame)
