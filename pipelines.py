@@ -41,5 +41,9 @@ reprocess_from_start = list(default)
 from beamline import redis as BLredis
 if int (BLredis.get('SMX')) == 1:
     default.insert(1, CornerResolution(base))
-
+    default[2] = XDSme(base, '-a', '-i', 'DELPHI=45')
+    p1_noscale = XDSme('p1_noscale', '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True)
+    hsymm_noscale = XDSme('hsymm_noscale', '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0')
+    default[4] = p1_noscale
+    default.insert(4, hsymm_noscale)
 pipelines = dict(filter(lambda x: isinstance(x[1], list), locals().iteritems()))
