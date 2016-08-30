@@ -14,6 +14,7 @@ class XDSme(Base):
         self.run_name = run_name
         self.args = args
         self.kwargs = kwargs
+        self.subtype = kwargs.get('subtype')
         self.p1 = kwargs.get('p1', False)
 
     def __repr__(self):
@@ -38,6 +39,8 @@ class XDSme(Base):
                 unit_cell, space_group,
                 **kwargs):
         self.dataset.status = "XDS %s" % self.run_name
+        if self.subtype is not None:
+            self.dataset.subtype = self.subtype
         self.dataset.save()
 
         extra = []
