@@ -18,12 +18,16 @@ class Process(Base):
             f.write(output)
 
 
-    def run_process(self, input_, args):
+    def run_process(self, input_, args, **kwargs):
+        process_project_dir = self.project_dir
+        project_dir = kwargs.get('project_dir')
+        if project_dir:
+            process_project_dir = project_dir
         process = subprocess.Popen(args,
                                    stderr=subprocess.STDOUT,
                                     stdout=subprocess.PIPE,
                                     stdin=subprocess.PIPE,
-                                    cwd=self.project_dir)
+                                    cwd=process_project_dir)
         out, err = process.communicate(input='\n'.join(input_))
 
         self.__write_logfile(args[0], out)
