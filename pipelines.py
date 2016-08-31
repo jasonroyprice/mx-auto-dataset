@@ -2,6 +2,7 @@ from modules.setup import Setup, Retrigger
 from modules.xdsme import XDSme
 from modules.ccp4 import Pointless, Aimless, Truncate
 from modules.other import Autorickshaw, CornerResolution
+from modules.sadabs import Xds2sad, Sadabs, Xprep
 
 def default_pipeline(base):
     from beamline import redis as BLredis
@@ -41,9 +42,18 @@ reprocess_from_start = list(default)
 from beamline import redis as BLredis
 if int (BLredis.get('SMX')) == 1:
     default.insert(1, CornerResolution(base))
-    default[2] = XDSme(base, '-a', '-i', 'DELPHI=45')
+    default[2] = XDSme(base, '-a', '-i', 'DELPHI=45', subtype='p')
     p1_noscale = XDSme('p1_noscale', '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True)
     hsymm_noscale = XDSme('hsymm_noscale', '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0')
     default[4] = p1_noscale
     default.insert(4, hsymm_noscale)
+    x = Xds2sad('xds2sad', filename='XDS_ASCII.HKL_p1_noscale')
+    w = Sadabs('Sadabs-w', absorber_strength = 'weak')
+    m = Sadabs('Sadabs-m', absorber_strength = 'moderate')
+    s = Sadabs('Sadabs-s', absorber_strength = 'strong')
+    default.append(x)
+    default.append(w)
+    default.append(m)
+    default.append(s)
+    # xprep steps here
 pipelines = dict(filter(lambda x: isinstance(x[1], list), locals().iteritems()))
