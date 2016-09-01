@@ -1,4 +1,3 @@
-from idlelib.ReplaceDialog import replace
 import os
 import glob
 import shutil
