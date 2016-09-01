@@ -88,3 +88,36 @@ def uc_summary(lines):
             sg = line.split(SPACE_GROUP_STRING)[1].split()
     return (uc, sg)
 
+class XprepSummary(Base):
+
+    def __init__(self, *args, **kwargs):
+        super(XprepSummary, self).__init__()
+        self.run_name = 'XprepSummary'
+
+    def process(self, **kwargs):
+        create_rint_log(self.project_dir)
+
+def create_rint_log(project_dir):
+    with open('%s%srint_log.txt' % (project_dir, os.sep), 'w') as log:
+        log.write('Resolution  #Data #Theory %Complete Redundancy Mean I Mean I/s R(int) Rsigma' + os.linesep)
+        filenames = get_prp_filenames(project_dir)
+        for filename in filenames:
+            inflines = get_lines_with_text(filename, 'Inf')
+            if len(inflines) > 0:
+                log.write('%s %s%s' % (inflines[-1].strip(), filename.replace(project_dir, '')[1:], os.linesep))
+
+def get_lines_with_text(filename, text):
+    with open(filename) as f:
+        textlines = []
+        lines = f.readlines()
+	for line in lines:
+            if text in line:
+                textlines.append(line)
+    return textlines
+def get_prp_filenames(project_dir):
+    prp_filenames = []
+    for root, subdir, files in os.walk(project_dir):
+        for filename in files:
+            if filename.endswith('.prp'):
+                prp_filenames.append(os.path.join(root, filename))
+    return prp_filenames
