@@ -1,6 +1,7 @@
 from .base import Base
 import subprocess
 import os
+from threading import Timer
 
 from custom_parser import get_summary
 
@@ -23,12 +24,18 @@ class Process(Base):
         project_dir = kwargs.get('project_dir')
         if project_dir:
             process_project_dir = project_dir
+        timeout = kwargs.get('timeout')
         process = subprocess.Popen(args,
                                    stderr=subprocess.STDOUT,
                                     stdout=subprocess.PIPE,
                                     stdin=subprocess.PIPE,
                                     cwd=process_project_dir)
-        out, err = process.communicate(input='\n'.join(input_))
+        t = Timer(timeout, process.kill)
+        try:
+            t.start()
+            out, err = process.communicate(input='\n'.join(input_))
+        finally:
+            t.cancel()
 
         self.__write_logfile(args[0], out)
 
@@ -37,7 +44,6 @@ class Pointless(Process):
         super(Pointless, self).__init__()
         self.run_name = run_name
         if kwargs.get('project_dir'):
-            print "setting project_dir"
             self.project_dir = kwargs.get('project_dir')
         if kwargs.get('nonchiral') == True:
             self.stdin = ['chirality nonchiral']
