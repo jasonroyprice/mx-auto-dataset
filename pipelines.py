@@ -55,5 +55,16 @@ if int (BLredis.get('SMX')) == 1:
     default.append(w)
     default.append(m)
     default.append(s)
-    # xprep steps here
+    xp_p1 = Xprep('xprep', filename = 'XDS_ASCII.HKL_p1', suffix = 'p1')
+    xp_p1_noscale = Xprep('xprep_p1_scale', filename = 'XDS_ASCII.HKL_p1_noscale', suffix = 'p1_noscale')
+    xp_sadabs_w = Xprep('xprep_sadabsw', filename = 'sadabs_w/sad.hkl', suffix = 'sadabs_w')
+    xp_sadabs_m = Xprep('xprep_sadabsm', filename = 'sadabs_m/sad.hkl', suffix = 'sadabs_m')
+    xp_sadabs_s = Xprep('xprep_sadabss', filename = 'sadabs_s/sad.hkl', suffix = 'sadabs_s')
+
+    default.append(xp_p1)
+    default.append(xp_p1_noscale)
+    default.append(xp_sadabs_w)
+    default.append(xp_sadabs_m)
+    default.append(xp_sadabs_s)
+
 pipelines = dict(filter(lambda x: isinstance(x[1], list), locals().iteritems()))
