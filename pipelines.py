@@ -2,7 +2,7 @@ from modules.setup import Setup, Retrigger
 from modules.xdsme import XDSme
 from modules.ccp4 import Pointless, Aimless, Truncate
 from modules.other import Autorickshaw, CornerResolution
-from modules.sadabs import Xds2sad, Sadabs, Xprep
+from modules.sadabs import Xds2sad, Sadabs, Xprep, XprepSummary
 
 def default_pipeline(base):
     from beamline import redis as BLredis
@@ -66,5 +66,8 @@ if int (BLredis.get('SMX')) == 1:
     default.append(xp_sadabs_w)
     default.append(xp_sadabs_m)
     default.append(xp_sadabs_s)
+
+    xp_summary = XprepSummary()
+    default.append(xp_summary)
 
 pipelines = dict(filter(lambda x: isinstance(x[1], list), locals().iteritems()))
