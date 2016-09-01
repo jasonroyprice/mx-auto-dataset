@@ -1,4 +1,5 @@
 import os
+import shutil
 from .ccp4 import Process
 from .base import Base
 from subprocess import call
@@ -44,7 +45,46 @@ class Sadabs(Process):
 class Xprep(Process):
 
     def __init__(self, run_name, *args, **kwargs):
-        pass
+        super(Xprep, self).__init__()
+        self.run_name = run_name
+        self.filename = kwargs.get('filename')
+        self.suffix = kwargs.get('suffix')
 
     def process(self, **kwargs):
-        pass
+        super(Xprep, self).process(**kwargs)
+        args = ['xprep']
+        if self.filename.startswith('XDS_ASCII'):
+            stdin = [self.filename, os.linesep * 14, 'q']
+        else:
+            with open('%s%s%s' % (self.project_dir, os.sep, 'XDS_ASCII.HKL_p1_noscale')) as f:
+                (unitcell, spacegroup) = uc_summary(f)
+                unitcell = ' '.join(unitcell)
+            stdin = [self.filename, os.linesep, '%s' % unitcell, os.linesep * 12, 'q']
+        if not self.suffix:
+            if os.path.exists('XDS_ASCII.prp'):
+                raise Exception('xprep output file already exists, aborting')
+        self.run_process(stdin, args, project_dir = self.project_dir, timeout = 10)
+        if self.suffix and self.filename.startswith('XDS_ASCII'):
+            shutil.move('%s%sXDS_ASCII.prp' % (self.project_dir, os.sep), '%s%sXDS_ASCII_%s.prp' % (self.project_dir, os.sep, self.suffix))
+
+def find_header(file): # modeled on find_summary in custom_parser.py # also in merger/check_reindex.py - TODO consolidate these
+    for line in file:
+        if 'Header lines:' in line:
+            break
+    for line in file:
+        if '!END_OF_HEADER' in line:
+            break
+        yield line
+
+def uc_summary(lines):
+    UNIT_CELL_STRING = '!UNIT_CELL_CONSTANTS='
+    SPACE_GROUP_STRING = '!SPACE_GROUP_NUMBER='
+    uc = None
+    sg = None
+    for line in lines:
+        if line.startswith(UNIT_CELL_STRING):
+            uc = line.split(UNIT_CELL_STRING)[1].split()
+        if line.startswith(SPACE_GROUP_STRING):
+            sg = line.split(SPACE_GROUP_STRING)[1].split()
+    return (uc, sg)
+
