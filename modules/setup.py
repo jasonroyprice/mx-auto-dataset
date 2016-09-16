@@ -34,7 +34,8 @@ class Setup(Base):
                                                  int(collection.no_frames) + int(collection.start_frame), path, prefix,
                                                  ext)
         #self.output.project = "%s_%d" % (filename, os.stat(dataset.last_frame).st_ctime)
-        self.output.project = "%s_%s" % (filename, self.dataset._id)
+        import time
+        self.output.project = "%s_%s" % (filename, time.strftime("%Y%m%d-%H%M%S"))
 
         # set project dir
         if get_epn(self.dataset.last_frame) == blconfig.EPN:
@@ -57,7 +58,7 @@ class Setup(Base):
         self.output.base_dir = kwargs.get('base_dir', default_base_dir)
         if not os.path.exists(self.output.base_dir):
             os.makedirs(self.output.base_dir)
-        self.output.project_dir = os.path.join(self.output.base_dir, 'xds_process_%s' % (self.output.project,))
+        self.output.project_dir = os.path.join(self.output.base_dir, '%s' % (self.output.project,))
 
         self.dataset.processing_dir = self.project_dir
         self.dataset.save()
