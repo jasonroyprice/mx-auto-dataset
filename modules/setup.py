@@ -15,6 +15,10 @@ from processing.models import Collection
 #    return "%s_%s" % (filename, dataset._id)
 
 class Setup(Base):
+    def __init__(self, suffix = '', *args, **kwargs):
+        super(Setup, self).__init__()
+        self.suffix = suffix
+
     def process(self, **kwargs):
         self.dataset.status = 'Starting...'
         self.dataset.completed = False
@@ -35,7 +39,7 @@ class Setup(Base):
                                                  ext)
         #self.output.project = "%s_%d" % (filename, os.stat(dataset.last_frame).st_ctime)
         import time
-        self.output.project = "%s_%s" % (filename, time.strftime("%Y%m%d-%H%M%S"))
+        self.output.project = "%s_%s_%s" % (filename, time.strftime("%Y%m%d-%H%M%S"), self.suffix)
 
         # set project dir
         if get_epn(self.dataset.last_frame) == blconfig.EPN:
