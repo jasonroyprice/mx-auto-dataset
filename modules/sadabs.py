@@ -53,6 +53,14 @@ class Xprep(Process):
     def process(self, **kwargs):
         super(Xprep, self).process(**kwargs)
         args = ['xprep']
+        import uuid
+        use_shortened_name = False
+        if len(self.filename)> 16: # if the name is too long for XPREP, such as XDS_ASCII.HKL_p1_noscale, then use a randomly generated short one
+            self.original_filename = self.filename
+            self.prefix = 'XDS_ASCII_%s' % str(uuid.uuid4())[0:4]
+            self.filename = '%s.%s' % (self.prefix, 'HKL')
+            use_shortened_name = True
+            os.symlink('%s%s%s' % (self.project_dir, os.sep, self.original_filename), '%s%s%s' % (self.project_dir, os.sep, self.filename))
         if self.filename.startswith('XDS_ASCII'):
             stdin = [self.filename, os.linesep * 14, 'q']
         else:
@@ -64,6 +72,9 @@ class Xprep(Process):
             if os.path.exists('XDS_ASCII.prp'):
                 raise Exception('xprep output file already exists, aborting')
         self.run_process(stdin, args, project_dir = self.project_dir, timeout = 10)
+        if use_shortened_name:
+            shutil.move('%s%s%s.prp' % (self.project_dir, os.sep, self.prefix), '%s%s%s.prp' % (self.project_dir, os.sep, os.path.splitext(self.original_filename)[0]))
+            os.remove(self.filename)
         if self.suffix and self.filename.startswith('XDS_ASCII'):
             shutil.move('%s%sXDS_ASCII.prp' % (self.project_dir, os.sep), '%s%sXDS_ASCII_%s.prp' % (self.project_dir, os.sep, self.suffix))
 
