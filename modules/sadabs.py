@@ -74,7 +74,7 @@ class Xprep(Process):
         self.run_process(stdin, args, project_dir = self.project_dir, timeout = 10)
         if use_shortened_name:
             shutil.move('%s%s%s.prp' % (self.project_dir, os.sep, self.prefix), '%s%s%s.prp' % (self.project_dir, os.sep, os.path.splitext(self.original_filename)[0]))
-            os.remove(self.filename)
+            os.remove('%s%s%s' % (self.project_dir, os.sep, self.filename))
         if self.suffix and self.filename.startswith('XDS_ASCII'):
             shutil.move('%s%sXDS_ASCII.prp' % (self.project_dir, os.sep), '%s%sXDS_ASCII_%s.prp' % (self.project_dir, os.sep, self.suffix))
 
