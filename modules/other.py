@@ -62,5 +62,9 @@ class CornerResolution(ReturnOptions):
         headermap = self.parse_adsc_header(self.dataset.last_frame)
         res = Resolution()
         res.set_from_header(headermap)
-        kwargs['high_resolution'] = str(res.get_resolution())
+        if not kwargs.get('high_resolution'):
+            print "setting corner resolution", res.get_resolution()
+            kwargs['high_resolution'] = str(res.get_resolution())
+        else:
+            print "keeping previously set resolution", kwargs.get('high_resolution')
         return kwargs
