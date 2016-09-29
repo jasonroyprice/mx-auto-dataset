@@ -40,26 +40,26 @@ class Resolution(object):
         res = 0.5/math.sin(math.atan2(min_distance*self.pixel_size,self.distance)/2) * self.wavelength
         return res
 
+def parse_adsc_header(self, filename):
+    import re
+    header_map = {}
+    with open(filename, 'r') as f:
+        line = f.readline()
+        assert(line.strip()== "{")
+        line = f.readline()
+        while "}" not in line:
+            sp = filter(None, re.split("[;= ]", line.strip()))
+            header_map[sp[0]] = sp[1]
+            line = f.readline()
+    return header_map
+
 class CornerResolution(ReturnOptions):
     def __init__(self, run_name, *args, **kwargs):
         super(CornerResolution, self).__init__()
         self.run_name = run_name
 
-    def parse_adsc_header(self, filename):
-        import re
-        header_map = {}
-        with open(filename, 'r') as f:
-            line = f.readline()
-            assert(line.strip()== "{")
-            line = f.readline()
-            while "}" not in line:
-                sp = filter(None, re.split("[;= ]", line.strip()))
-                header_map[sp[0]] = sp[1]
-                line = f.readline()
-        return header_map
-
     def process(self, **kwargs):
-        headermap = self.parse_adsc_header(self.dataset.last_frame)
+        headermap = parse_adsc_header(self.dataset.last_frame) # TODO change to check for detector type
         res = Resolution()
         res.set_from_header(headermap)
         if not kwargs.get('high_resolution'):
