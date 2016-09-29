@@ -3,6 +3,8 @@ __author__ = 'aishimaj'
 from ccp4 import Process
 from subprocess import call
 from base import ReturnOptions
+import h5py
+import logging
 
 class Autorickshaw(Process):
     def __init__(self, run_name, *args, **kwargs):
@@ -52,6 +54,36 @@ def parse_adsc_header(self, filename):
             header_map[sp[0]] = sp[1]
             line = f.readline()
     return header_map
+
+def fix_beam_center(inputmap):
+    fixmap = {'BEAM_CENTER_X_PIX': 'BEAM_CENTER_X', 'BEAM_CENTER_Y_PIX' : 'BEAM_CENTER_Y'}
+    for (pix, mm) in  fixmap.iteritems():
+	inputmap[mm] = inputmap[pix] * inputmap['PIXEL_SIZE']
+        del inputmap[pix]
+    return inputmap
+
+def fix_values(inputmap): # factor to multiply the current value by to get the correct value
+    fixmap = {'BEAM_CENTER_X': 1000, 'BEAM_CENTER_Y': 1000, 'DISTANCE' : 1000, 'PIXEL_SIZE' : 1000}
+    for (key, value) in fixmap.iteritems():
+        inputmap[key] = inputmap[key] * value
+    return inputmap
+
+def extract_eiger_header(filename):
+    h5dbase = '/entry/instrument/detector/'
+    h5map = {'BEAM_CENTER_X_PIX': h5dbase + 'beam_center_x', 'BEAM_CENTER_Y_PIX': h5dbase + 'beam_center_y',
+     'SIZE1':         h5dbase + 'detectorSpecific/x_pixels_in_detector', 'SIZE2' : h5dbase + 'detectorSpecific/y_pixels_in_detector',
+     'PIXEL_SIZE':    h5dbase + 'x_pixel_size',
+     'DISTANCE':      h5dbase + 'detector_distance',
+     'WAVELENGTH':    '/entry/instrument/beam/incident_wavelength'}
+
+    f = h5py.File(filename)
+    returnmap = {}
+    for (key, value) in h5map.iteritems():
+        logging.debug(key, value)
+        returnmap[key] = f.get(value)[()]
+    returnmap = fix_beam_center(returnmap)
+    returnmap = fix_values(returnmap)
+    return returnmap
 
 class CornerResolution(ReturnOptions):
     def __init__(self, run_name, *args, **kwargs):
