@@ -82,3 +82,11 @@ def get_valid_filenames(start, end, path, prefix, ext):
         if filename:
             filenames.append(filename[0])
     return filenames
+
+def get_detector_specific_filename(filename, detector_name):
+    if detector_name == 'adsc':
+        return filename
+    elif detector_name == 'eiger':
+        master = '_master'
+        return master.join(filename.split(master)[:-1])
+    raise Exception('Unknown detector type')

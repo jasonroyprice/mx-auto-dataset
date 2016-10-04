@@ -6,7 +6,8 @@ from beamline import variables as blconfig
 
 from .base import Base
 
-from utils import create_auto_dir_from_last_frame, replace_top_directory_level, get_epn, get_valid_filenames
+from utils import create_auto_dir_from_last_frame, replace_top_directory_level, get_epn, get_valid_filenames, \
+    get_detector_specific_filename
 
 from processing.models import Collection
 
@@ -35,7 +36,8 @@ class Setup(Base):
                                                  int(collection.no_frames) + int(collection.start_frame), path, prefix,
                                                  ext)
         import time
-        self.output.project = "%s_%s_%s" % (filename, time.strftime("%Y%m%d-%H%M%S"), self.suffix)
+        self.output.project = "%s_%s_%s" % (
+        get_detector_specific_filename(filename, self.detector_type), time.strftime("%Y%m%d-%H%M%S"), self.suffix)
 
         # set project dir
         if get_epn(self.dataset.last_frame) == blconfig.EPN:
