@@ -10,10 +10,6 @@ from utils import create_auto_dir_from_last_frame, replace_top_directory_level, 
 
 from processing.models import Collection
 
-#def folder_from_dataset(dataset):
-#    _, filename = os.path.split(dataset.last_frame)
-#    return "%s_%s" % (filename, dataset._id)
-
 class Setup(Base):
     def __init__(self, suffix = '', *args, **kwargs):
         super(Setup, self).__init__()
@@ -38,7 +34,6 @@ class Setup(Base):
         self.output.images = get_valid_filenames(int(collection.start_frame),
                                                  int(collection.no_frames) + int(collection.start_frame), path, prefix,
                                                  ext)
-        #self.output.project = "%s_%d" % (filename, os.stat(dataset.last_frame).st_ctime)
         import time
         self.output.project = "%s_%s_%s" % (filename, time.strftime("%Y%m%d-%H%M%S"), self.suffix)
 
