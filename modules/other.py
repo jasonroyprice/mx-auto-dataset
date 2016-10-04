@@ -5,6 +5,7 @@ from subprocess import call
 from base import ReturnOptions
 import h5py
 import logging
+from beamline import variables as blconfig
 
 class Autorickshaw(Process):
     def __init__(self, run_name, *args, **kwargs):
@@ -42,7 +43,7 @@ class Resolution(object):
         res = 0.5/math.sin(math.atan2(min_distance*self.pixel_size,self.distance)/2) * self.wavelength
         return res
 
-def parse_adsc_header(self, filename):
+def parse_adsc_header(filename):
     import re
     header_map = {}
     with open(filename, 'r') as f:
@@ -58,7 +59,7 @@ def parse_adsc_header(self, filename):
 def fix_beam_center(inputmap):
     fixmap = {'BEAM_CENTER_X_PIX': 'BEAM_CENTER_X', 'BEAM_CENTER_Y_PIX' : 'BEAM_CENTER_Y'}
     for (pix, mm) in  fixmap.iteritems():
-	inputmap[mm] = inputmap[pix] * inputmap['PIXEL_SIZE']
+        inputmap[mm] = inputmap[pix] * inputmap['PIXEL_SIZE']
         del inputmap[pix]
     return inputmap
 
@@ -91,7 +92,12 @@ class CornerResolution(ReturnOptions):
         self.run_name = run_name
 
     def process(self, **kwargs):
-        headermap = parse_adsc_header(self.dataset.last_frame) # TODO change to check for detector type
+        if blconfig.detector_type == 'adsc':
+            headermap = parse_adsc_header(self.dataset.last_frame)
+        elif blconfig.detector_type == 'eiger':
+            headermap = extract_eiger_header(self.dataset.last_frame)
+        else:
+            raise Exception('CornerResolution invalid detector type')
         res = Resolution()
         res.set_from_header(headermap)
         if not kwargs.get('high_resolution'):
