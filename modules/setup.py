@@ -18,6 +18,7 @@ class Setup(Base):
     def __init__(self, suffix = '', *args, **kwargs):
         super(Setup, self).__init__()
         self.suffix = suffix
+        self.detector_type = kwargs.get('detector_type', 'adsc')
 
     def process(self, **kwargs):
         self.dataset.status = 'Starting...'
