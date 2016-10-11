@@ -34,10 +34,9 @@ class Setup(Base):
         collection = Collection(self.dataset.collection_id.id)
         self.output.images = get_valid_filenames(int(collection.start_frame),
                                                  int(collection.no_frames) + int(collection.start_frame), path, prefix,
-                                                 ext)
+                                                 ext, self.detector_type, self.dataset.last_frame)
         import time
-        self.output.project = "%s_%s_%s" % (
-        get_detector_specific_filename(filename, self.detector_type), time.strftime("%Y%m%d-%H%M%S"), self.suffix)
+        self.output.project = "%s_%s_%s" % (filename, time.strftime("%Y%m%d-%H%M%S"), self.suffix)
 
         # set project dir
         if get_epn(self.dataset.last_frame) == blconfig.EPN:
