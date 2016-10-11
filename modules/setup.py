@@ -25,6 +25,8 @@ class Setup(Base):
         # get details from file
         path, filename = os.path.split(self.dataset.last_frame)
         filename, ext = os.path.splitext(filename)
+        if self.detector_type == 'eiger':
+            filename = filename.split('_master')[0]
         prefix, frame = filename.rsplit('_', 1)
 
         # get image list
