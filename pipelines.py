@@ -2,7 +2,6 @@ from modules.setup import Setup, Retrigger
 from modules.xdsme import XDSme
 from modules.ccp4 import Pointless, Aimless, Truncate
 from modules.other import Autorickshaw, CornerResolution
-from modules.diffpics_with_preds import DiffPicsWithPreds
 
 def default_pipeline(base):
     from beamline import redis as BLredis
@@ -22,14 +21,11 @@ def default_pipeline(base):
 ]
 
 base = 'hsymm'
-default_no_diffpics = default_pipeline(base)
-diffpics = DiffPicsWithPreds(base)
-default = list(default_no_diffpics)
-default.insert(2, diffpics)
+default = default_pipeline(base)
 # reprocess pipeline (copy of default)
 # chanege xdsme hsymm to only do CORRECT
 # add retrigger step to copy data from other processing
-reprocess = list(default_no_diffpics)
+reprocess = list(default)
 reprocess[1] = XDSme(base, '-5', '-a')
 reprocess.insert(1, Retrigger())
 
@@ -40,7 +36,7 @@ reprocess_ucsg[1] = XDSme(base2, '-3', '-a')
 reprocess_ucsg.insert(1, Retrigger(3))
 
 # for weak, brute, slow, ice options, go from the beginning
-reprocess_from_start = list(default_no_diffpics)
+reprocess_from_start = list(default)
 
 from beamline import redis as BLredis
 if int (BLredis.get('SMX')) == 1:
