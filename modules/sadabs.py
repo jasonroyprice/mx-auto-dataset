@@ -40,7 +40,7 @@ class Sadabs(Process):
 
         stdin = [os.linesep, '1', 'xds.sad', os.linesep * 4, self.absorber, os.linesep * 10]
 
-        self.run_process(stdin, args, project_dir = dir_name)
+        self.run_process(stdin, args, project_dir = dir_name, timeout=60)
 
 class Xprep(Process):
 
