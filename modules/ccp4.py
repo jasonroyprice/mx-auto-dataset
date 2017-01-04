@@ -19,6 +19,18 @@ class Process(Base):
             f.write(output)
 
 
+    def check_fatal_errors(self, output):
+        if isinstance(output, list):
+            line = output.next()
+            try:
+                while line:
+                    if line.startswith('FATAL ERROR'):
+                        raise Exception(output.next())
+                    line = output.next()
+            except StopIteration:
+                pass  # expected end for a clean file
+
+
     def run_process(self, input_, args, **kwargs):
         process_project_dir = self.project_dir
         project_dir = kwargs.get('project_dir')
@@ -38,6 +50,8 @@ class Process(Base):
             t.cancel()
 
         self.__write_logfile(args[0], out)
+        self.check_fatal_errors(out)
+
 
 class Pointless(Process):
     def __init__(self, run_name, *args, **kwargs):
