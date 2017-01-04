@@ -3,6 +3,7 @@ from modules.xdsme import XDSme
 from modules.ccp4 import Pointless, Aimless, Truncate
 from modules.other import Autorickshaw, CornerResolution
 from modules.sadabs import Xds2sad, Sadabs, Xprep, XprepSummary
+from beamline import variables as blconfig
 
 def default_pipeline(base):
     from beamline import redis as BLredis
@@ -11,7 +12,7 @@ def default_pipeline(base):
     else:
         po = Pointless(base)
     return [
-    Setup(suffix='process'),
+    Setup(suffix='process', detector=blconfig.detector_type),
     XDSme(base, '-a', subtype = 'p'),
     XDSme('p1', '-5', '-a', p1=True),
     XDSme(base+'_NOANOM', '-5'),
@@ -27,20 +28,20 @@ default = default_pipeline(base)
 # chanege xdsme hsymm to only do CORRECT
 # add retrigger step to copy data from other processing
 reprocess = list(default)
-reprocess[0] = Setup(suffix='retrigger')
+reprocess[0] = Setup(suffix='retrigger', detector=blconfig.detector_type)
 reprocess[1] = XDSme(base, '-5', '-a', subtype = 'r')
 reprocess.insert(1, Retrigger())
 
 # to use unit cell and spacegroup
 base2 = 'hsymmucsb'
 reprocess_ucsg = default_pipeline(base2)
-reprocess_ucsg[0] = Setup(suffix = 'retrigger')
+reprocess_ucsg[0] = Setup(suffix = 'retrigger', detector=blconfig.detector_type)
 reprocess_ucsg[1] = XDSme(base2, '-3', '-a', subtype = 'r')
 reprocess_ucsg.insert(1, Retrigger(3))
 
 # for weak, brute, slow, ice options, go from the beginning
 reprocess_from_start = list(default)
-reprocess_from_start[0] = Setup(suffix = 'retrigger')
+reprocess_from_start[0] = Setup(suffix = 'retrigger', detector=blconfig.detector_type)
 reprocess_from_start[1] = XDSme(base, '-a', subtype = 'r')
 
 from beamline import redis as BLredis
