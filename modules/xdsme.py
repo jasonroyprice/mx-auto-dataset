@@ -96,7 +96,7 @@ class XDSme(Base):
         self.move_files()
 
     def run_xdsme(self, extra):
-        args = ['xdsme']
+        args = ['numactl', '--cpunodebind=2', 'xdsme', '-n', '40', '--invert']
         args.extend(['-p', self.output.project])
         args.extend(['-i', ' '.join(self.XDS_INPUT)])
         if self.p1:
