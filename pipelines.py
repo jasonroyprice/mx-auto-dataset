@@ -47,7 +47,12 @@ reprocess_from_start[1] = XDSme(base, '-a', subtype = 'r')
 from beamline import redis as BLredis
 if int (BLredis.get('SMX')) == 1:
     default.insert(1, CornerResolution(base))
-    from_start_delphi = XDSme(base, '-a', '-i', 'DELPHI=45', subtype='p')
+
+    if blconfig.detector_type == 'eiger':
+        delphi = 'DELPHI=15'
+    else:
+        delphi = 'DELPHI=45'
+    from_start_delphi = XDSme(base, '-a', '-i', delphi, subtype='p')
     default[2] = from_start_delphi
     p1_noscale = XDSme('p1_noscale', '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True)
     hsymm_noscale = XDSme('hsymm_noscale', '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0')
@@ -91,7 +96,7 @@ if int (BLredis.get('SMX')) == 1:
     reprocess_ucsg += xprep_steps
     reprocess_ucsg.append(xp_summary)
 
-    from_start_delphi_reprocess = XDSme(base, '-a', '-i', 'DELPHI=45', subtype='r')
+    from_start_delphi_reprocess = XDSme(base, '-a', '-i', delphi, subtype='r')
     reprocess_from_start.insert(1, CornerResolution(base))
     del reprocess_from_start[4:5]
     reprocess_from_start[2] = from_start_delphi_reprocess
