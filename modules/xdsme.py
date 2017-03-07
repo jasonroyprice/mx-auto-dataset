@@ -96,7 +96,7 @@ class XDSme(Base):
         self.move_files()
 
     def run_xdsme(self, extra):
-        args = ['xdsme', '-n', '32']
+        args = ['xdsme', '--eiger', '-n', '32']
         args.extend(['-p', self.output.project])
         args.extend(['-i', ' '.join(self.XDS_INPUT)])
         if self.p1:
