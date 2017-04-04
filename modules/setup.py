@@ -1,6 +1,7 @@
 import os
 import glob
 import shutil
+import socket
 
 from beamline import variables as blconfig
 
@@ -62,6 +63,12 @@ class Setup(Base):
         if not os.path.exists(self.output.base_dir):
             os.makedirs(self.output.base_dir)
         self.output.project_dir = os.path.join(self.output.base_dir, '%s' % (self.output.project,))
+
+        if not os.path.exists(self.output.project_dir):
+            os.makedirs(self.output.project_dir)
+        with open(os.path.join(self.output.project_dir, 'processing_info.txt'), 'w') as setup_file:
+            setup_file.write('HOSTNAME: %s' % socket.gethostname() + os.linesep)
+            setup_file.write(str(kwargs) + os.linesep)
 
         self.dataset.processing_dir = self.project_dir
         self.dataset.save()
