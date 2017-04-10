@@ -98,7 +98,6 @@ class XDSme(Base):
 
     def run_xdsme(self, extra):
         args = ['xdsme', '--eiger', '-n', '32']
-        args = ['nice', 'numactl', '--cpunodebind=1,2,3', 'xdsme', '--eiger', '-n', '120']
         if int(BLredis.get('SMX')) == 1:
             args.extend(['--index_refine'])
         args.extend(['-p', self.output.project])
