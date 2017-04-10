@@ -2,6 +2,7 @@ from .base import Base
 from subprocess import call, check_output
 import os
 import shutil
+from beamline import redis as BLredis
 
 class Trigger(dict):
     pass
@@ -97,6 +98,8 @@ class XDSme(Base):
 
     def run_xdsme(self, extra):
         args = ['nice', 'numactl', '--cpunodebind=1,2,3', 'xdsme', '--eiger', '-n', '120']
+        if int(BLredis.get('SMX')) == 1:
+            args.extend(['--index_refine'])
         args.extend(['-p', self.output.project])
         args.extend(['-i', ' '.join(self.XDS_INPUT)])
         if self.p1:
