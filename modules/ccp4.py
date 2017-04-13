@@ -75,7 +75,7 @@ class Pointless(Process):
             xdsin = 'XDS_ASCII.HKL_%s' % self.run_name
         hklout = 'pointless_%s.mtz' % self.run_name
 
-        args = ['pointless', 'XDSIN', xdsin, 'HKLOUT', hklout]
+        args = ['pointless', '-copy', 'XDSIN', xdsin, 'HKLOUT', hklout]
         self.run_process(self.stdin, args)
         
 class Aimless(Process):
