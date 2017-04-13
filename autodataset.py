@@ -57,6 +57,7 @@ if options.dataset_id:
 elif options.collection_id:
     pipeline = pipelines.default
     collection_id = options.collection_id
+    options_dict['weak'] = u'weak' #for processing data from data collections, always use weak
 
 output.dataset = Dataset.create_from_collection(collection_id)
 
