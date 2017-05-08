@@ -9,7 +9,7 @@ class Trigger(dict):
     pass
 
 class XDSme(Base):
-    XDS_INPUT = ['SENSOR_THICKNESS= 0.01']
+    XDS_INPUT = []
 
     def __init__(self, run_name, *args, **kwargs):
         super(XDSme, self).__init__()
