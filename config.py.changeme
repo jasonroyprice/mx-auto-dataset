@@ -3,3 +3,11 @@ __author__ = 'aishimaj'
 REDIS_QUEUE_NAME="autodataset"
 PIPELINE_NAME="PRODUCTION"
 IS_STAGING=False
+XDSME_COMMANDLINE={'mxprocessing-test': ['xdsme', '-i', 'LIB=/usr/local/lib/dectris-neggia.so', '-n', '50'],
+    'SR03ID01EPU01': ['nice', 'numactl', '--cpunodebind=1,2,3', 'xdsme', '--eiger', '-n', '120'],
+    # CPU02 on EPU - 'SR03ID01EPU01': ['nice', 'numactl', '--cpunodebind=2', 'xdsme', '--eiger', '-n', '40'],
+    # CPU03 on EPU - 'SR03ID01EPU01': ['nice', 'numactl', '--cpunodebind=3', 'xdsme', '--eiger', '-n', '40'],
+    'SR03ID01EPU02': ['xdsme', '--eiger', '-n', '50'],
+    'SR03ID01DAT01': ['xdsme', '--eiger', '-n', '32'], # multiple workers should be handled by changing workers.ini
+    'SR03BM01DAT01': ['xdsme', '--invert']
+    )
