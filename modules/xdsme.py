@@ -3,6 +3,7 @@ from subprocess import call, check_output
 import os
 import shutil
 from beamline import redis as BLredis
+from utils import get_xdsme_commandline
 
 class Trigger(dict):
     pass
@@ -97,7 +98,7 @@ class XDSme(Base):
         self.move_files()
 
     def run_xdsme(self, extra):
-        args = ['xdsme', '--invert']
+        args = get_xdsme_commandline()
         if int(BLredis.get('SMX')) == 1:
             args.extend(['--index_refine'])
         args.extend(['-p', self.output.project])
