@@ -100,4 +100,7 @@ def get_detector_specific_filename(filename, detector_name):
 
 def get_xdsme_commandline():
     hostname = os.environ['HOSTNAME'].split('.')[0]
-    return XDSME_COMMANDLINE[hostname]
+    try:
+        return XDSME_COMMANDLINE[hostname]
+    except KeyError:
+        return XDSME_COMMANDLINE['default']
