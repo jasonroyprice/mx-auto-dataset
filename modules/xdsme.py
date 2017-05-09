@@ -2,12 +2,14 @@ from .base import Base
 from subprocess import call, check_output
 import os
 import shutil
+from beamline import redis as BLredis
+from utils import get_xdsme_commandline
 
 class Trigger(dict):
     pass
 
 class XDSme(Base):
-    XDS_INPUT = ['SENSOR_THICKNESS= 0.01']
+    XDS_INPUT = []
 
     def __init__(self, run_name, *args, **kwargs):
         super(XDSme, self).__init__()
@@ -96,7 +98,9 @@ class XDSme(Base):
         self.move_files()
 
     def run_xdsme(self, extra):
-        args = ['xdsme']
+        args = get_xdsme_commandline()
+        if int(BLredis.get('SMX')) == 1:
+            args.extend(['--index_refine'])
         args.extend(['-p', self.output.project])
         args.extend(['-i', ' '.join(self.XDS_INPUT)])
         if self.p1:
