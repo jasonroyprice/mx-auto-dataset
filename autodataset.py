@@ -19,7 +19,7 @@ logbook.set_datetime_format("local")
 import pipelines
 from beamline import variables as blconfig
 
-from processing.models import setup, Dataset
+from processing.models import setup, Dataset, Screening, Collection
 setup(blconfig.get_database(staging=IS_STAGING))
 
 parser = argparse.ArgumentParser()
@@ -59,7 +59,13 @@ elif options.collection_id:
     collection_id = options.collection_id
     options_dict['weak'] = u'weak' #for processing data from data collections, always use weak
 
-output.dataset = Dataset.create_from_collection(collection_id)
+collection = Collection(collection_id)
+if collection.experiment_type == 'dataset':
+    output.dataset = Dataset.create_from_collection(collection_id)
+elif collection.experiment_type == 'screening':
+    output.dataset = Screening.create_from_collection(collection_id)
+else:
+    print "unexpected collection type"
 
 # modify top level directory - useful for testing with files mounted from sans
 if options.data_dir != None:
