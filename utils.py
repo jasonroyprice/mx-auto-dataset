@@ -1,5 +1,5 @@
 __author__ = 'aishimaj'
-import os
+import socket
 from config import XDSME_COMMANDLINE
 
 def replace_top_directory_level(full_path, data_dir):
@@ -99,7 +99,7 @@ def get_detector_specific_filename(filename, detector_name):
     raise Exception('Unknown detector type')
 
 def get_xdsme_commandline():
-    hostname = os.environ['HOSTNAME'].split('.')[0]
+    hostname = socket.gethostname().split('.')[0]
     try:
         return XDSME_COMMANDLINE[hostname]
     except KeyError:
