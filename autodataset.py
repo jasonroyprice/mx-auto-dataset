@@ -60,12 +60,15 @@ elif options.collection_id:
     options_dict['weak'] = u'weak' #for processing data from data collections, always use weak
 
 collection = Collection(collection_id)
-if collection.experiment_type == 'dataset':
-    output.dataset = Dataset.create_from_collection(collection_id)
-elif collection.experiment_type == 'screening':
-    output.dataset = Screening.create_from_collection(collection_id)
+if hasattr(collection, 'experiment_type'):
+    if collection.experiment_type == 'dataset':
+        output.dataset = Dataset.create_from_collection(collection_id)
+    elif collection.experiment_type == 'screening':
+        output.dataset = Screening.create_from_collection(collection_id)
+    else:
+        print "unexpected collection type"
 else:
-    print "unexpected collection type"
+    output.dataset = Dataset.create_from_collection(collection_id)
 
 # modify top level directory - useful for testing with files mounted from sans
 if options.data_dir != None:
