@@ -1,6 +1,7 @@
 __author__ = 'aishimaj'
 import socket
 from config import XDSME_COMMANDLINE
+import copy
 
 def replace_top_directory_level(full_path, data_dir):
     """
@@ -101,6 +102,6 @@ def get_detector_specific_filename(filename, detector_name):
 def get_xdsme_commandline():
     hostname = socket.gethostname().split('.')[0]
     try:
-        return XDSME_COMMANDLINE[hostname]
+        return copy.deepcopy(XDSME_COMMANDLINE[hostname])
     except KeyError:
-        return XDSME_COMMANDLINE['default']
+        return copy.deepcopy(XDSME_COMMANDLINE['default'])
