@@ -46,13 +46,21 @@ output = Container()
 _input = Container()
 
 if options.dataset_id:
-    if options.ice or options.weak or options.slow or options.brute:
+    _input.from_dataset = Dataset(options.dataset_id)
+    try:
+        old_options = _input.from_dataset.retrigger
+    except AttributeError:
+        print "no retrigger object found, going on"
+        old_options = {}
+    if not ((options.ice == 'ice') == old_options.get('ice', False) and (options.weak == 'weak') == old_options.get('weak', False) and (options.slow == 'slow') == old_options.get('slow', False) and (options.brute == 'brute') == old_options.get('brute', False)):
+        print 'reprocess from start'
         pipeline = pipelines.reprocess_from_start
-    elif options.unit_cell and options.space_group:
+    elif not(options.unit_cell == None and options.space_group == None) and (options.unit_cell != old_options.get('unit_cell', None) or options.space_group != old_options.get('space_group', None)):
+        print 'reprocess ucsg'
         pipeline = pipelines.reprocess_ucsg
     else:
+        print 'standard reprocess (from correct)'
         pipeline = pipelines.reprocess
-    _input.from_dataset = Dataset(options.dataset_id)
     collection_id = _input.from_dataset.collection_id.id
 
 elif options.collection_id:
