@@ -101,7 +101,11 @@ class Retrigger(Base):
             return linkfiles, copyfiles
     def process(self, **kwargs):
         linkfiles, copyfiles = self.file_lists(self.stepnumber)
-        os.makedirs(self.project_dir)
+        if not os.path.exists(self.project_dir):
+            print 'retrigger: need to create directories, but should have been done by now!'
+            os.makedirs(self.project_dir)
+        else:
+            print 'retrigger: do not need to create directories (expected)'
 
         # many files just need to be linked to the old directory - they are only read
         for item in (linkfiles):
