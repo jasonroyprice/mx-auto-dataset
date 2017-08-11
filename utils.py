@@ -105,3 +105,18 @@ def get_xdsme_commandline():
         return copy.deepcopy(XDSME_COMMANDLINE[hostname])
     except KeyError:
         return copy.deepcopy(XDSME_COMMANDLINE['default'])
+
+class DryRunDataset(object):
+    def __init__(self, _id=None):
+        self._id = _id
+        self.type = u'dataset'
+        self.last_frame = ''
+    def save(self):
+        pass
+    def reload(self):
+        pass
+    @classmethod
+    def create_from_collection(cls, collection_id):
+        a = cls()
+        a.collection_id = collection_id
+        return a

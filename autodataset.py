@@ -29,6 +29,7 @@ group.add_argument('--dataset_id')
 parser.add_argument('--data_dir')
 parser.add_argument('--output_dir')
 parser.add_argument('--processing_dir', help="Location of previously run processing directory")
+parser.add_argument('--dry_run', help='Show the pipeline without actually running it')
 
 # add parser arguments from all classes inside the pipelines
 for clz in set([obj.__class__ for obj in chain(*pipelines.pipelines.values())]):
@@ -60,15 +61,20 @@ elif options.collection_id:
     options_dict['weak'] = u'weak' #for processing data from data collections, always use weak
 
 collection = Collection(collection_id)
-if hasattr(collection, 'experiment_type'):
-    if collection.experiment_type == 'dataset':
-        output.dataset = Dataset.create_from_collection(collection_id)
-    elif collection.experiment_type == 'screening':
-        output.dataset = Screening.create_from_collection(collection_id)
-    else:
-        print "unexpected collection type"
+if options.dry_run:
+    from utils import DryRunDataset
+    output.dataset = DryRunDataset(collection_id)
+    output.dataset.last_frame = collection.last_file
 else:
-    output.dataset = Dataset.create_from_collection(collection_id)
+    if hasattr(collection, 'experiment_type'):
+        if collection.experiment_type == 'dataset':
+            output.dataset = Dataset.create_from_collection(collection_id)
+        elif collection.experiment_type == 'screening':
+            output.dataset = Screening.create_from_collection(collection_id)
+        else:
+            print "unexpected collection type"
+    else:
+        output.dataset = Dataset.create_from_collection(collection_id)
 
 # modify top level directory - useful for testing with files mounted from sans
 if options.data_dir != None:
@@ -93,10 +99,11 @@ for obj in pipeline:
     try:
         obj.input = _input
         obj.output = output
-        if isinstance(obj, ReturnOptions):
-            options_dict = obj.process(**options_dict)
-        else:
-            obj.process(**options_dict)
+        if not options.dry_run:
+            if isinstance(obj, ReturnOptions):
+                options_dict = obj.process(**options_dict)
+            else:
+                obj.process(**options_dict)
     except Exception, e:
         logger.error("Failed to run %s: [%s] %s" % (obj.__class__.__name__, e.__class__.__name__, e.message))
         import traceback
