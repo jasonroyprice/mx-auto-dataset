@@ -11,6 +11,7 @@ XDSME_COMMANDLINE={'mxprocessing-test': ['xdsme', '-i', 'LIB=/usr/local/lib/dect
     'SR03ID01DAT01': ['xdsme', '--eiger', '--library', '/usr/local/lib/dectris-neggia.so', '-n', '32'], # multiple workers should be handled by changing workers.ini
     'SR03BM01DAT01': ['xdsme', '--invert'],
     'SR03ID01DAT02': ['xdsme', '--eiger', '--library', '/usr/local/lib/dectris-neggia.so'], # 2.42 test computer, assume Eiger processing
+    'SR03ID01ASCI05' : ['xdsme', '--eiger', '--library', '/usr/local/lib/dectris-neggia.so'],
     'default': ['xdsme'],
 
     }
