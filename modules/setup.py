@@ -95,6 +95,7 @@ class Retrigger(Base):
                      'X-CORRECTIONS.cbf',
                      'Y-CORRECTIONS.cbf',
                      'BKGINIT.cbf',
+                     'BLANK.cbf',
                      'GAIN.cbf']
             copyfiles = ['SPOT.XDS',
                      'XPARM.XDS']
