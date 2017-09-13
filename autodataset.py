@@ -52,10 +52,7 @@ if options.dataset_id:
     except AttributeError:
         print "no retrigger object found, going on"
         old_options = {}
-    try:
-        fromstart = unknown_args.count('fromstart') > 0
-    except:
-        fromstart = False
+    fromstart = options.from_start
     if fromstart or not ((options.ice == 'ice') == old_options.get('ice', False) and (options.weak == 'weak') == old_options.get('weak', False) and (options.slow == 'slow') == old_options.get('slow', False) and (options.brute == 'brute') == old_options.get('brute', False)):
         if fromstart:
             print 'reprocess forced from start'

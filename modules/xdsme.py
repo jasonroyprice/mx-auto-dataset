@@ -34,11 +34,13 @@ class XDSme(Base):
         parser.add_argument('--brute')
         parser.add_argument('--unit_cell')
         parser.add_argument('--space_group')
+        parser.add_argument('--from_start')
 
     def process(self, first_frame, last_frame,
                 low_resolution, high_resolution,
                 ice, weak, slow, brute,
                 unit_cell, space_group,
+                from_start,
                 **kwargs):
         self.dataset.status = "XDS %s" % self.run_name
         if self.subtype is not None:
@@ -89,6 +91,8 @@ class XDSme(Base):
         if brute:
             extra.extend(['--brute'])
             retrigger['brute'] = True
+        if from_start:
+            retrigger['from_start'] = True
 
         if retrigger:
             self.dataset.retrigger = retrigger
