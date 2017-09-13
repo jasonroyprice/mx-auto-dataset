@@ -52,8 +52,15 @@ if options.dataset_id:
     except AttributeError:
         print "no retrigger object found, going on"
         old_options = {}
-    if not ((options.ice == 'ice') == old_options.get('ice', False) and (options.weak == 'weak') == old_options.get('weak', False) and (options.slow == 'slow') == old_options.get('slow', False) and (options.brute == 'brute') == old_options.get('brute', False)):
-        print 'reprocess from start'
+    try:
+        fromstart = unknown_args.count('fromstart') > 0
+    except:
+        fromstart = False
+    if fromstart or not ((options.ice == 'ice') == old_options.get('ice', False) and (options.weak == 'weak') == old_options.get('weak', False) and (options.slow == 'slow') == old_options.get('slow', False) and (options.brute == 'brute') == old_options.get('brute', False)):
+        if fromstart:
+            print 'reprocess forced from start'
+        else:
+            print 'reprocess from start'
         pipeline = pipelines.reprocess_from_start
     elif not(options.unit_cell == None and options.space_group == None) and (options.unit_cell != old_options.get('unit_cell', None) or options.space_group != old_options.get('space_group', None)):
         print 'reprocess ucsg'
