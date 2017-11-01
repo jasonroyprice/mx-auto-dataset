@@ -2,6 +2,8 @@ __author__ = 'aishimaj'
 import socket
 from config import XDSME_COMMANDLINE
 import copy
+from processing.models import setup, Dataset, Collection
+from beamline import variables as blconfig
 
 def replace_top_directory_level(full_path, data_dir):
     """
@@ -120,3 +122,10 @@ class DryRunDataset(object):
         a = cls()
         a.collection_id = collection_id
         return a
+
+def get_retrigger_dir(dataset_id):
+    setup(blconfig.get_database())
+    dataset = Dataset(dataset_id)
+    collection_id = dataset.collection_id.id
+    PI = Collection(collection_id).PI
+    return "/data/%(EPN)s/home/%(PI)s/auto" % {"EPN": blconfig.EPN, "PI": PI}

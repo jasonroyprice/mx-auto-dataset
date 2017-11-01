@@ -8,7 +8,7 @@ from beamline import variables as blconfig
 from .base import Base
 
 from utils import create_auto_dir_from_last_frame, replace_top_directory_level, get_epn, get_valid_filenames, \
-    get_detector_specific_filename
+    get_detector_specific_filename, get_retrigger_dir
 
 from processing.models import Collection
 
@@ -42,8 +42,12 @@ class Setup(Base):
         self.output.project = "%s_%s_%s" % (filename, time.strftime("%Y%m%d-%H%M%S"), self.suffix)
 
         # set project dir
+        print self.dataset.last_frame, blconfig.EPN, get_epn(self.dataset.last_frame)
         if get_epn(self.dataset.last_frame) == blconfig.EPN:
-            base_dir = blconfig.AUTO_DIR
+            if kwargs.get('dataset_id',0):
+                base_dir = get_retrigger_dir(kwargs['dataset_id'])
+            else:
+                base_dir = blconfig.AUTO_DIR
         else: # re-trigger back into previous EPN's directory if we're not looking at current data
             if hasattr(self.input, 'from_dataset'):
                 base_dir = create_auto_dir_from_last_frame(self.input.from_dataset.last_frame)
