@@ -42,7 +42,6 @@ class Setup(Base):
         self.output.project = "%s_%s_%s" % (filename, time.strftime("%Y%m%d-%H%M%S"), self.suffix)
 
         # set project dir
-        print self.dataset.last_frame, blconfig.EPN, get_epn(self.dataset.last_frame)
         if get_epn(self.dataset.last_frame) == blconfig.EPN:
             if kwargs.get('dataset_id',0):
                 base_dir = get_retrigger_dir(kwargs['dataset_id'])
