@@ -4,6 +4,9 @@ import os
 import shutil
 from beamline import redis as BLredis
 from utils import get_xdsme_commandline
+import json
+import socket
+from beamline import variables as mxvars
 
 class Trigger(dict):
     pass
@@ -102,7 +105,8 @@ class XDSme(Base):
         self.move_files()
 
     def run_xdsme(self, extra):
-        args = get_xdsme_commandline()
+        hostname = socket.gethostname().split('.')[0]
+        args = get_xdsme_commandline(hostname)
         if int(BLredis.get('SMX')) == 1:
             args.extend(['--index_refine'])
         args.extend(['-p', self.output.project])
@@ -115,7 +119,18 @@ class XDSme(Base):
         args.extend(extra)
         args.extend(self.output.images)
 
-        call(args, cwd=self.base_dir)
+        if args[0] == 'xdsme':
+            call(args, cwd=self.base_dir)
+        else:
+            job_definition = dict(
+                xds_command=args[1:], # arg[0] is the command to call
+                output_dir=self.base_dir,
+                #beamline='MX2_VKUBE_test_STAGING', # optinally set beamline for configuration
+                labels=dict(
+                        epn=mxvars.EPN,
+                        project=self.project.output)
+            )
+            call(args[0], json.dumps(job_definition))
 
     def move_files(self, ):
         correct = os.path.join(self.project_dir, 'CORRECT.LP')

@@ -101,8 +101,7 @@ def get_detector_specific_filename(filename, detector_name):
         return master.join(filename.split(master)[:-1])
     raise Exception('Unknown detector type')
 
-def get_xdsme_commandline():
-    hostname = socket.gethostname().split('.')[0]
+def get_xdsme_commandline(hostname):
     try:
         return copy.deepcopy(XDSME_COMMANDLINE[hostname])
     except KeyError:
