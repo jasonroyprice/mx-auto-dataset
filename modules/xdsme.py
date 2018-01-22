@@ -110,7 +110,8 @@ class XDSme(Base):
         if int(BLredis.get('SMX')) == 1:
             args.extend(['--index_refine'])
         args.extend(['-p', self.output.project])
-        args.extend(['-i', ' '.join(self.XDS_INPUT)])
+        if self.XDS_INPUT:
+            args.extend(['-i', ' '.join(self.XDS_INPUT)])
         if self.p1:
             sg, cell = self.__get_cell_and_sg()
             args.extend(['-s', sg])
@@ -125,12 +126,13 @@ class XDSme(Base):
             job_definition = dict(
                 xds_command=args[1:], # arg[0] is the command to call
                 output_dir=self.base_dir,
+                beamline='mx2',
                 #beamline='MX2_VKUBE_test_STAGING', # optinally set beamline for configuration
                 labels=dict(
                         epn=mxvars.EPN,
-                        project=self.project.output)
+                        project=self.output.project)
             )
-            call(args[0], json.dumps(job_definition))
+            call([args[0], json.dumps(job_definition)])
 
     def move_files(self, ):
         correct = os.path.join(self.project_dir, 'CORRECT.LP')
