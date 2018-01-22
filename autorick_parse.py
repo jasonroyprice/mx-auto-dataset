@@ -197,7 +197,7 @@ else:
 # build AR command
 os.chdir(newdir)
 command = ['python2.7', '/xray/progs/autorick/DPS2AR.py']
-for (key, value) in ar_vars.iteritems():
+for (key, value) in ar_vars.items():
     command.append(key)
     command.append(value)
 print

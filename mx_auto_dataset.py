@@ -15,7 +15,7 @@ def dataset(*args, **kwargs):
     print "RUNNING %s AUTODATASET VERSION %s" % (config.PIPELINE_NAME, version)
     cmd = [pipeline_path]
 
-    for key, value in kwargs.iteritems():
+    for key, value in kwargs.items():
         cmd.append("--%s" % key)
         cmd.append(str(value))
 

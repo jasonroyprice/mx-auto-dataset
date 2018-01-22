@@ -58,14 +58,14 @@ def parse_adsc_header(filename):
 
 def fix_beam_center(inputmap):
     fixmap = {'BEAM_CENTER_X_PIX': 'BEAM_CENTER_X', 'BEAM_CENTER_Y_PIX' : 'BEAM_CENTER_Y'}
-    for (pix, mm) in  fixmap.iteritems():
+    for (pix, mm) in  fixmap.items():
         inputmap[mm] = inputmap[pix] * inputmap['PIXEL_SIZE']
         del inputmap[pix]
     return inputmap
 
 def fix_values(inputmap): # factor to multiply the current value by to get the correct value
     fixmap = {'BEAM_CENTER_X': 1000, 'BEAM_CENTER_Y': 1000, 'DISTANCE' : 1000, 'PIXEL_SIZE' : 1000}
-    for (key, value) in fixmap.iteritems():
+    for (key, value) in fixmap.items():
         inputmap[key] = inputmap[key] * value
     return inputmap
 
@@ -79,7 +79,7 @@ def extract_eiger_header(filename):
 
     f = h5py.File(filename)
     returnmap = {}
-    for (key, value) in h5map.iteritems():
+    for (key, value) in h5map.items():
         logging.debug(key, value)
         returnmap[key] = f.get(value)[()]
     returnmap = fix_beam_center(returnmap)

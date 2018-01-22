@@ -106,4 +106,4 @@ if int (BLredis.get('SMX')) == 1:
     reprocess_from_start += xprep_steps
     reprocess_from_start.append(xp_summary)
 
-pipelines = dict(filter(lambda x: isinstance(x[1], list), locals().iteritems()))
+pipelines = dict(filter(lambda x: isinstance(x[1], list), locals().items()))
