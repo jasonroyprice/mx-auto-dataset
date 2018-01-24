@@ -120,7 +120,7 @@ class XDSme(Base):
         args.extend(extra)
         args.extend(self.output.images)
 
-        if args[0] == 'xdsme':
+        if args[0] in ['xdsme', 'nice']:
             call(args, cwd=self.base_dir)
         else:
             job_definition = dict(
