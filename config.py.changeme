@@ -2,6 +2,7 @@ __author__ = 'aishimaj'
 
 REDIS_QUEUE_NAME="autodataset"
 PIPELINE_NAME="PRODUCTION"
+PIPELINE_PATH='/xray/software/Python/libraries/mx_auto_dataset/autodataset.sh'
 IS_STAGING=False
 XDSME_COMMANDLINE={'mxprocessing-test': ['xdsme', '-i', 'LIB=/usr/local/lib/dectris-neggia.so', '-n', '50'],
     'SR03ID01EPU01': ['nice', 'numactl', '--cpunodebind=1,2,3', 'xdsme', '--eiger', '--library', '/usr/local/lib/dectris-neggia.so', '-n', '120'],
