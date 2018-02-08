@@ -14,12 +14,12 @@ def default_pipeline(base):
     return [
     Setup(suffix='process', detector=blconfig.detector_type),
     XDSme(base, base, '-a', subtype = 'p'),
-    XDSme('p1', 'p1', '-5', '-a', p1=True),
-    XDSme(base+'_NOANOM', base+'_NOANOM', '-5'),
     po,
     Aimless(base),
     AimlessPlot(base),
     AimlessScalePlot(base),
+    XDSme('p1', 'p1', '-5', '-a', p1=True),
+    XDSme(base+'_NOANOM', base+'_NOANOM', '-5'),
     Truncate(base),
     LinkCorrect(base),
     Autorickshaw(base)
