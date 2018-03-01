@@ -1,6 +1,6 @@
 from modules.setup import Setup, Retrigger
 from modules.xdsme import XDSme
-from modules.ccp4 import Pointless, Aimless, Truncate
+from modules.ccp4 import Pointless, Aimless, Truncate, AimlessPlot
 from modules.other import Autorickshaw, CornerResolution
 from modules.sadabs import Xds2sad, Sadabs, Xprep, XprepSummary
 from beamline import variables as blconfig
@@ -18,6 +18,7 @@ def default_pipeline(base):
     XDSme(base+'_NOANOM', '-5'),
     po,
     Aimless(base),
+    AimlessPlot(base),
     Truncate(base),
     Autorickshaw(base)
 ]
