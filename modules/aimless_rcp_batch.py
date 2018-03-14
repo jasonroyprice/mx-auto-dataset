@@ -29,8 +29,8 @@ def plot_rcp_batch(batch, rcp, cmposs, filename, write_to_redis, redis_key):
     ax1.set_title('Rcp vs. batch')
     ax1.set_xlabel('batch')
     xaxis = batch
-    yaxis = [float(i) for i in rcp] # numbers come out of tables as text
-    yaxis2 = [float(i) for i in cmposs]
+    yaxis = [float(i) if i is not '-' else None for i in rcp] # numbers come out of tables as text
+    yaxis2 = [float(i) if i is not '-' else None for i in cmposs]
     plots.append(ax1)
     ax = plots[-1]
     ax.plot(xaxis, yaxis, 'red', label='Rcp')
