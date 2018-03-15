@@ -59,7 +59,7 @@ if options.dataset_id:
         else:
             print 'reprocess from start'
         pipeline = pipelines.reprocess_from_start
-    elif not(options.unit_cell == None and options.space_group == None) and (options.unit_cell != old_options.get('unit_cell', None) or options.space_group != old_options.get('space_group', None)):
+    elif not(not options.unit_cell and not options.space_group) and (options.unit_cell != old_options.get('unit_cell', None) or options.space_group != old_options.get('space_group', None)):
         print 'reprocess ucsg'
         pipeline = pipelines.reprocess_ucsg
     else:
