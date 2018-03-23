@@ -14,16 +14,17 @@ class Trigger(dict):
 class XDSme(Base):
     XDS_INPUT = []
 
-    def __init__(self, run_name, *args, **kwargs):
+    def __init__(self, run_name, display_name, *args, **kwargs):
         super(XDSme, self).__init__()
         self.run_name = run_name
+        self.display_name = display_name
         self.args = args
         self.kwargs = kwargs
         self.subtype = kwargs.get('subtype')
         self.p1 = kwargs.get('p1', False)
 
     def __repr__(self):
-        return 'XDSme(%s)' % self.run_name
+        return 'XDSme(%s)' % self.display_name
 
     @staticmethod
     def add_args(parser):
@@ -45,7 +46,7 @@ class XDSme(Base):
                 unit_cell, space_group,
                 from_start,
                 **kwargs):
-        self.dataset.status = "XDS %s" % self.run_name
+        self.dataset.status = "XDS %s" % self.display_name
         if self.subtype is not None:
             self.dataset.subtype = self.subtype
         self.dataset.save()

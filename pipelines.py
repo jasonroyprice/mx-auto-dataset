@@ -13,9 +13,9 @@ def default_pipeline(base):
         po = Pointless(base)
     return [
     Setup(suffix='process', detector=blconfig.detector_type),
-    XDSme(base, '-a', subtype = 'p'),
-    XDSme('p1', '-5', '-a', p1=True),
-    XDSme(base+'_NOANOM', '-5'),
+    XDSme(base, base, '-a', subtype = 'p'),
+    XDSme('p1', 'p1', '-5', '-a', p1=True),
+    XDSme(base+'_NOANOM', base+'_NOANOM', '-5'),
     po,
     Aimless(base),
     AimlessPlot(base),
@@ -30,20 +30,19 @@ default = default_pipeline(base)
 # add retrigger step to copy data from other processing
 reprocess = list(default)
 reprocess[0] = Setup(suffix='retrigger', detector=blconfig.detector_type)
-reprocess[1] = XDSme(base, '-5', '-a', subtype = 'r')
+reprocess[1] = XDSme(base, base, '-5', '-a', subtype = 'r')
 reprocess.insert(1, Retrigger())
 
 # to use unit cell and spacegroup
-base2 = 'hsymmucsb'
-reprocess_ucsg = default_pipeline(base2)
+reprocess_ucsg = default_pipeline(base)
 reprocess_ucsg[0] = Setup(suffix = 'retrigger', detector=blconfig.detector_type)
-reprocess_ucsg[1] = XDSme(base2, '-3', '-a', subtype = 'r')
+reprocess_ucsg[1] = XDSme(base, 'hsymmucsg', '-3', '-a', subtype = 'r')
 reprocess_ucsg.insert(1, Retrigger(3))
 
 # for weak, brute, slow, ice options, go from the beginning
 reprocess_from_start = list(default)
 reprocess_from_start[0] = Setup(suffix = 'retrigger', detector=blconfig.detector_type)
-reprocess_from_start[1] = XDSme(base, '-a', subtype = 'r')
+reprocess_from_start[1] = XDSme(base, base, '-a', subtype = 'r')
 
 from beamline import redis as BLredis
 if int (BLredis.get('SMX')) == 1:
@@ -53,10 +52,14 @@ if int (BLredis.get('SMX')) == 1:
         delphi = 'DELPHI=15'
     else:
         delphi = 'DELPHI=45'
-    from_start_delphi = XDSme(base, '-a', '-i', delphi, subtype='p')
+    from_start_delphi = XDSme(base, base, '-a', '-i', delphi, subtype='p')
     default[2] = from_start_delphi
-    p1_noscale = XDSme('p1_noscale', '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True)
-    hsymm_noscale = XDSme('hsymm_noscale', '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0')
+
+    p1n = 'p1_noscale'
+    hsn = 'hsymm_noscale'
+
+    p1_noscale = XDSme(p1n, p1n, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True)
+    hsymm_noscale = XDSme(hsn, hsn, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0')
     default[4] = p1_noscale
     default.insert(4, hsymm_noscale)
     x = Xds2sad('xds2sad', filename='XDS_ASCII.HKL_p1_noscale')
@@ -77,8 +80,8 @@ if int (BLredis.get('SMX')) == 1:
     xp_summary = XprepSummary()
     default.append(xp_summary)
 
-    p1_noscale_reprocess = XDSme('p1_noscale', '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True, subtype= 'r')
-    hsymm_noscale_reprocess = XDSme('hsymm_noscale', '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', subtype='r')
+    p1_noscale_reprocess = XDSme(p1n, p1n, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True, subtype= 'r')
+    hsymm_noscale_reprocess = XDSme(hsn, hsn, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', subtype='r')
     reprocess.insert(1, CornerResolution(base))
     del reprocess[5:6]
     reprocess.insert(3, hsymm_noscale_reprocess)
@@ -87,9 +90,9 @@ if int (BLredis.get('SMX')) == 1:
     reprocess += xprep_steps
     reprocess.append(xp_summary)
 
-    p1_noscale_ucsg = XDSme('p1_noscale', '-3', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True, subtype= 'r')
-    hsymm_noscale_ucsg = XDSme('hsymm_noscale', '-3', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', subtype='r')
-    reprocess_ucsg.insert(1, CornerResolution(base2))
+    p1_noscale_ucsg = XDSme(p1n, p1n, '-3', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True, subtype= 'r')
+    hsymm_noscale_ucsg = XDSme(hsn, hsn, '-3', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', subtype='r')
+    reprocess_ucsg.insert(1, CornerResolution(base))
     del reprocess_ucsg[3:6]
     reprocess_ucsg.insert(3, hsymm_noscale_ucsg)
     reprocess_ucsg.insert(3, p1_noscale_ucsg)
@@ -97,7 +100,7 @@ if int (BLredis.get('SMX')) == 1:
     reprocess_ucsg += xprep_steps
     reprocess_ucsg.append(xp_summary)
 
-    from_start_delphi_reprocess = XDSme(base, '-a', '-i', delphi, subtype='r')
+    from_start_delphi_reprocess = XDSme(base, base, '-a', '-i', delphi, subtype='r')
     reprocess_from_start.insert(1, CornerResolution(base))
     del reprocess_from_start[4:5]
     reprocess_from_start[2] = from_start_delphi_reprocess
