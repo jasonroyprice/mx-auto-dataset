@@ -127,7 +127,7 @@ class XDSme(Base):
             job_definition = dict(
                 xds_command=args[1:], # arg[0] is the command to call
                 output_dir=self.base_dir,
-                beamline='mx2',
+                beamline='MX2',
                 #beamline='MX2_VKUBE_test_STAGING', # optinally set beamline for configuration
                 labels=dict(
                         epn=mxvars.EPN,
