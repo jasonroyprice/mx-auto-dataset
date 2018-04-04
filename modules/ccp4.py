@@ -1,9 +1,13 @@
 from .base import Base
 import subprocess
 import os
+import sys
 from threading import Timer
+from beamline import variables as blconfig
 
 from custom_parser import get_summary
+
+from aimless_rcp_batch import plot
 
 class Process(Base):
     def process(self, **kwargs):
@@ -128,6 +132,19 @@ class Aimless(Process):
                      #processing_dir=self.project_dir,
                      **summary)
         self.dataset.save()        
+
+class AimlessPlot(Process):
+    def __init__(self, run_name, *args, **kwargs):
+        super(AimlessPlot, self).__init__()
+        self.run_name = run_name
+    def process(self, **kwargs):
+        keyname = '%s:%s:%s:rmerge_plot' % (self.dataset.beamline, self.dataset.epn, self.project_dir.replace('/','_'))
+        try:
+            plot(directory=self.project_dir, write_to_redis=True, redis_key=keyname)
+            self.dataset.__dict__.update(rmerge_plot=keyname)
+            self.dataset.save()
+        except:
+            print 'exception during plot generation: type: %s value: %s traceback: %s' % sys.exc_info()
 
 class Truncate(Process):
     def __init__(self, run_name, *args, **kwargs):

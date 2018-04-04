@@ -7,7 +7,7 @@ import os
 
 @job(config.REDIS_QUEUE_NAME, connection=redis, timeout=1800)
 def dataset(*args, **kwargs):
-    pipeline_path = '/xray/progs/Python/libraries/mx_auto_dataset/autodataset.sh'
+    pipeline_path = config.PIPELINE_PATH
     dir_path = os.path.dirname(os.path.realpath(pipeline_path))
     os.chdir(dir_path)
     output = Popen(['git', 'rev-parse', 'HEAD'], stdout=subprocess.PIPE)
