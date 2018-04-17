@@ -6,6 +6,8 @@ from base import ReturnOptions
 import h5py
 import logging
 from beamline import variables as blconfig
+from beamline import redis as BLredis
+import os
 
 class Autorickshaw(Process):
     def __init__(self, run_name, *args, **kwargs):
@@ -106,3 +108,20 @@ class CornerResolution(ReturnOptions):
         else:
             print "keeping previously set resolution", kwargs.get('high_resolution')
         return kwargs
+
+class LinkCorrect(Process):
+    def __init__(self, run_name, *args, **kwargs):
+        super(LinkCorrect, self).__init__()
+        self.run_name = run_name
+    def process(self, **kwargs):
+        output_dir = self.project_dir
+        if BLredis.get('SMX') =='0':
+            file_to_link = 'CORRECT.LP_hsymm'
+        elif BLredis.get('SMX') == '1':
+            return
+        src = os.path.join(output_dir, file_to_link)
+        dst = os.path.join(output_dir, 'CORRECT.LP')
+        try:
+            os.symlink(src, dst)
+        except:
+            print "warning, %s to %s symlink could not be made" % (src, dst)
