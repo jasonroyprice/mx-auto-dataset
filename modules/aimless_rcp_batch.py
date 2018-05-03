@@ -33,10 +33,17 @@ def plot_rcp_batch(batch, rcp, cmposs, filename, write_to_redis, redis_key):
     yaxis2 = [float(i) if i is not '-' else None for i in cmposs]
     plots.append(ax1)
     ax = plots[-1]
-    ax.plot(xaxis, yaxis, 'red', label='Rcp')
-    ax.plot(xaxis, yaxis2, 'blue', label='CmPoss')
-    ax.legend()
+    ax.plot(xaxis, yaxis2, 'blue', label='CmPoss', color='b')
+    ax.set_ylabel('CmPoss', color='b')
+    ax.tick_params('y', colors='b')
     ax.set_ylim(0, 1.1)
+
+    ax2 = ax.twinx()
+    ax2.plot(xaxis, yaxis, 'red', label='Rcp', color='r')
+    ax2.set_ylabel('Rcp', color='r')
+    ax2.tick_params('y', colors='r')
+    ax2.set_ylim(0, max(yaxis) * 2)
+
     if write_to_redis and redis_key:
         try:
             tmpdirectory = tempfile.mkdtemp()
