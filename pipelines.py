@@ -62,8 +62,8 @@ if int (BLredis.get('SMX')) == 1:
 
     p1_noscale = XDSme(p1n, p1n, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True)
     hsymm_noscale = XDSme(hsn, hsn, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0')
-    default[4] = hsymm_noscale
-    default.insert(4, p1_noscale)
+    default[7] = hsymm_noscale
+    default.insert(7, p1_noscale)
     c = Cif(base)
     x = Xds2sad('xds2sad', filename='XDS_ASCII.HKL_p1_noscale')
     w = Sadabs('Sadabs-w', absorber_strength = 'weak')
@@ -86,7 +86,7 @@ if int (BLredis.get('SMX')) == 1:
     p1_noscale_reprocess = XDSme(p1n, p1n, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True, subtype= 'r')
     hsymm_noscale_reprocess = XDSme(hsn, hsn, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', subtype='r')
     reprocess.insert(1, CornerResolution(base))
-    del reprocess[5:6]
+    del reprocess[8:9]
     reprocess.insert(3, hsymm_noscale_reprocess)
     reprocess.insert(4, p1_noscale_reprocess)
     reprocess += sadabs_steps
@@ -96,7 +96,8 @@ if int (BLredis.get('SMX')) == 1:
     p1_noscale_ucsg = XDSme(p1n, p1n, '-3', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True, subtype= 'r')
     hsymm_noscale_ucsg = XDSme(hsn, hsn, '-3', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', subtype='r')
     reprocess_ucsg.insert(1, CornerResolution(base))
-    del reprocess_ucsg[3:6]
+    del reprocess_ucsg[3:4]
+    del reprocess_ucsg[6:8]
     reprocess_ucsg.insert(3, hsymm_noscale_ucsg)
     reprocess_ucsg.insert(3, p1_noscale_ucsg)
     reprocess_ucsg += sadabs_steps
@@ -105,10 +106,10 @@ if int (BLredis.get('SMX')) == 1:
 
     from_start_delphi_reprocess = XDSme(base, base, '-a', '-i', delphi, subtype='r')
     reprocess_from_start.insert(1, CornerResolution(base))
-    del reprocess_from_start[4:5]
+    del reprocess_from_start[7:8]
     reprocess_from_start[2] = from_start_delphi_reprocess
-    reprocess_from_start.insert(4, p1_noscale_reprocess)
-    reprocess_from_start.insert(5, hsymm_noscale_reprocess)
+    reprocess_from_start.insert(6, p1_noscale_reprocess)
+    reprocess_from_start.insert(7, hsymm_noscale_reprocess)
     reprocess_from_start += sadabs_steps
     reprocess_from_start += xprep_steps
     reprocess_from_start.append(xp_summary)
