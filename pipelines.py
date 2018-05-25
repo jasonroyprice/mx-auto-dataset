@@ -88,7 +88,7 @@ if int (BLredis.get('SMX')) == 1:
     reprocess.insert(1, CornerResolution(base))
     del reprocess[8:9]
     reprocess.insert(3, hsymm_noscale_reprocess)
-    reprocess.insert(4, p1_noscale_reprocess)
+    reprocess.insert(3, p1_noscale_reprocess)
     reprocess += sadabs_steps
     reprocess += xprep_steps
     reprocess.append(xp_summary)
@@ -96,8 +96,7 @@ if int (BLredis.get('SMX')) == 1:
     p1_noscale_ucsg = XDSme(p1n, p1n, '-3', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True, subtype= 'r')
     hsymm_noscale_ucsg = XDSme(hsn, hsn, '-3', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', subtype='r')
     reprocess_ucsg.insert(1, CornerResolution(base))
-    del reprocess_ucsg[3:4]
-    del reprocess_ucsg[6:8]
+    del reprocess_ucsg[7:9]
     reprocess_ucsg.insert(3, hsymm_noscale_ucsg)
     reprocess_ucsg.insert(3, p1_noscale_ucsg)
     reprocess_ucsg += sadabs_steps
