@@ -33,5 +33,13 @@ def write_template_file(project_dir, beamline, detector, energy_in_kev, cryojet_
     with open('%s/%s' % (project_dir, 'template.cif'), 'w') as template_file:
         template_file.write(template.render(detector=detector_text, beamline=beamline_text, energy=energy, temperature=cryojet_temperature))
 
+class Cif(Base):
+
+    def __init__(self, run_name, *args, **kwargs):
+        super(Cif, self).__init__()
+
+    def process(self, **kwargs):
+        write_template_file(self.project_dir, beamline, detector, energy_in_kev, cryojet_temperature)
+
 if __name__ == '__main__':
     run_test()
