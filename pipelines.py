@@ -62,8 +62,8 @@ if int (BLredis.get('SMX')) == 1:
 
     p1_noscale = XDSme(p1n, p1n, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True)
     hsymm_noscale = XDSme(hsn, hsn, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0')
-    default[7] = hsymm_noscale
-    default.insert(7, p1_noscale)
+    default.insert(6, hsymm_noscale)
+    default.insert(6, p1_noscale)
     c = Cif(base)
     x = Xds2sad('xds2sad', filename='XDS_ASCII.HKL_p1_noscale')
     w = Sadabs('Sadabs-w', absorber_strength = 'weak')
