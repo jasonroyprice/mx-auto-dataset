@@ -62,9 +62,9 @@ if int (BLredis.get('SMX')) == 1:
 
     p1_noscale = XDSme(p1n, p1n, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True)
     hsymm_noscale = XDSme(hsn, hsn, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0')
-    del default[6:8]
-    default.insert(6, hsymm_noscale)
-    default.insert(6, p1_noscale)
+    del default[8:9]
+    default.insert(7, hsymm_noscale)
+    default.insert(7, p1_noscale)
     c = Cif(base)
     x = Xds2sad('xds2sad', filename='XDS_ASCII.HKL_p1_noscale')
     w = Sadabs('Sadabs-w', absorber_strength = 'weak')
@@ -97,7 +97,7 @@ if int (BLredis.get('SMX')) == 1:
     p1_noscale_ucsg = XDSme(p1n, p1n, '-3', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True, subtype= 'r')
     hsymm_noscale_ucsg = XDSme(hsn, hsn, '-3', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', subtype='r')
     reprocess_ucsg.insert(1, CornerResolution(base))
-    del reprocess_ucsg[7:9]
+    del reprocess_ucsg[9:10]
     reprocess_ucsg.insert(3, hsymm_noscale_ucsg)
     reprocess_ucsg.insert(3, p1_noscale_ucsg)
     reprocess_ucsg += sadabs_steps
@@ -106,10 +106,10 @@ if int (BLredis.get('SMX')) == 1:
 
     from_start_delphi_reprocess = XDSme(base, base, '-a', '-i', delphi, subtype='r')
     reprocess_from_start.insert(1, CornerResolution(base))
-    del reprocess_from_start[7:8]
+    del reprocess_from_start[8:9]
     reprocess_from_start[2] = from_start_delphi_reprocess
-    reprocess_from_start.insert(6, p1_noscale_reprocess)
-    reprocess_from_start.insert(7, hsymm_noscale_reprocess)
+    reprocess_from_start.insert(7, p1_noscale_reprocess)
+    reprocess_from_start.insert(8, hsymm_noscale_reprocess)
     reprocess_from_start += sadabs_steps
     reprocess_from_start += xprep_steps
     reprocess_from_start.append(xp_summary)
