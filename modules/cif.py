@@ -20,9 +20,9 @@ def write_template_file(project_dir, beamline, detector, energy_in_kev, cryojet_
         raise Exception('Unknown beamline')
 
     if detector == 'eiger':
-        detector_text = 'Eiger 16M'
+        detector_text = 'Dectris Eiger 16M'
     elif detector == 'adsc':
-        detector_text = 'ADSC q215'
+        detector_text = 'ADSC Quantum 210r'
     else:
         raise Exception('Unknown detector')
 
@@ -33,8 +33,8 @@ def write_template_file(project_dir, beamline, detector, energy_in_kev, cryojet_
     KEV_TO_ANGSTROM = 12.398420
     energy = float(energy_in_kev)/KEV_TO_ANGSTROM
 
-    with open('%s/%s' % (project_dir, 'template.cif'), 'w') as template_file:
-        template_file.write(template.render(detector=detector_text, beamline=beamline_text, energy=energy, temperature=cryojet_temperature))
+    with open('%s/%s' % (project_dir, 'autoprocess.cif'), 'w') as template_file:
+        template_file.write(template.render(detector=detector_text, beamline=beamline_text, energy='%.6f' % energy, temperature=cryojet_temperature))
 
 class Cif(Base):
 
