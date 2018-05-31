@@ -81,7 +81,6 @@ def plot_scale_batch(batch, scale, filename, write_to_redis, redis_key):
     ax.plot(xaxis, yaxis, 'blue', label='Scale', color='b')
     ax.set_ylabel('Scale', color='b')
     ax.tick_params('y', colors='b')
-    ax.set_ylim(0, 1.1)
 
     if write_to_redis and redis_key:
         try:
