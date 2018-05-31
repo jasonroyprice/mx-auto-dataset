@@ -7,7 +7,7 @@ from beamline import variables as blconfig
 
 from custom_parser import get_summary
 
-from aimless_rcp_batch import plot
+from aimless_rcp_batch import plot, plot_scale
 
 class Process(Base):
     def process(self, **kwargs):
