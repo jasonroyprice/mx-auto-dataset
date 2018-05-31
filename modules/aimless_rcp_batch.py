@@ -60,6 +60,46 @@ def plot_rcp_batch(batch, rcp, cmposs, filename, write_to_redis, redis_key):
         plt.savefig(filename, format='png')
     plt.close()
 
+def extract_scale_batch(directory, filename):
+    logfile = smartie.parselog('%s/%s' % (directory, filename))
+    table = logfile.program(0).tables('=== Scales v rotation range, XDSdataset')[0]
+    batch = table.col('N')
+    scale = table.col('Mn(k)')
+    return batch, scale
+
+def plot_scale_batch(batch, scale, filename, write_to_redis, redis_key):
+    if write_to_redis and not redis_key:
+        raise TypeError('if writing to redis, redis_key must be defined')
+    plots = []
+    fig, ax1 = plt.subplots()
+    ax1.set_title('Scale vs. batch')
+    ax1.set_xlabel('batch')
+    xaxis = batch
+    yaxis = [float(i) if i is not '-' else None for i in scale] # numbers come out of tables as text
+    plots.append(ax1)
+    ax = plots[-1]
+    ax.plot(xaxis, yaxis, 'blue', label='Scale', color='b')
+    ax.set_ylabel('Scale', color='b')
+    ax.tick_params('y', colors='b')
+    ax.set_ylim(0, 1.1)
+
+    if write_to_redis and redis_key:
+        try:
+            tmpdirectory = tempfile.mkdtemp()
+            tmpfilename = 'scale.png'
+            tmppath = os.path.join(tmpdirectory, tmpfilename)
+            plt.savefig(tmppath, format='png')
+            with open(tmppath,'r') as tmpfile:
+                ex = 60*60*24*30*3 # seconds in 3 months
+                redis.set(redis_key, tmpfile.read(),ex=ex)
+        finally:
+            os.remove(tmppath)
+            os.rmdir(tmpdirectory)
+    else:
+        plt.savefig(filename, format='png')
+    plt.close()
+
+
 @click.command()
 @click.option('--directory')
 @click.option('--filename', default='aimless.log')
@@ -72,5 +112,10 @@ def real_plot(directory, filename, output_filename, write_to_redis, redis_key):
 def plot(directory='', filename='aimless.log', output_filename='aimless.png', write_to_redis=False, redis_key=''):
     batch, rcp, cmposs= extract_rcp_batch(directory, filename)
     plot_rcp_batch(batch, rcp, cmposs, output_filename, write_to_redis, redis_key)
+
+def plot_scale(directory='', filename='aimless.log', output_filename='aimless.png', write_to_redis=False, redis_key=''):
+    batch, scale= extract_scale_batch(directory, filename)
+    plot_scale_batch(batch, scale, output_filename, write_to_redis, redis_key)
+
 if __name__ == "__main__":
     real_plot()
