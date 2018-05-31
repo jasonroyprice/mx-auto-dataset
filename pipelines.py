@@ -3,8 +3,8 @@ from modules.xdsme import XDSme
 from modules.ccp4 import Pointless, Aimless, Truncate, AimlessPlot, AimlessScalePlot
 from modules.other import Autorickshaw, CornerResolution, LinkCorrect
 from modules.sadabs import Xds2sad, Sadabs, Xprep, XprepSummary
+from modules.cif import Cif
 from beamline import variables as blconfig
-
 def default_pipeline(base):
     from beamline import redis as BLredis
     if int(BLredis.get('SMX')) == 1:
@@ -64,11 +64,12 @@ if int (BLredis.get('SMX')) == 1:
     hsymm_noscale = XDSme(hsn, hsn, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0')
     default[4] = p1_noscale
     default.insert(4, hsymm_noscale)
+    c = Cif(base)
     x = Xds2sad('xds2sad', filename='XDS_ASCII.HKL_p1_noscale')
     w = Sadabs('Sadabs-w', absorber_strength = 'weak')
     m = Sadabs('Sadabs-m', absorber_strength = 'moderate')
     s = Sadabs('Sadabs-s', absorber_strength = 'strong')
-    sadabs_steps = [x,w,m,s]
+    sadabs_steps = [c,x,w,m,s]
     default += sadabs_steps
     xp_p1 = Xprep('xprep', filename = 'XDS_ASCII.HKL_p1', suffix = 'p1')
     xp_p1_noscale = Xprep('xprep_p1_scale', filename = 'XDS_ASCII.HKL_p1_noscale', suffix = 'p1_noscale')

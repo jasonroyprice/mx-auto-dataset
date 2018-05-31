@@ -1,4 +1,7 @@
+from .base import Base
 from jinja2 import Environment, FileSystemLoader
+import epics
+from processing.models import Collection
 
 def run_test():
     beamline = 'MX2' # beamline in collection objecxt
@@ -24,11 +27,11 @@ def write_template_file(project_dir, beamline, detector, energy_in_kev, cryojet_
         raise Exception('Unknown detector')
 
     env = Environment(
-        loader=FileSystemLoader('templates'))
+        loader=FileSystemLoader('/xray/software/Python/libraries/mx_auto_dataset/templates'))
 
     template = env.get_template('cx_template.cif')
     KEV_TO_ANGSTROM = 12.398420
-    energy = energy_in_kev/KEV_TO_ANGSTROM
+    energy = float(energy_in_kev)/KEV_TO_ANGSTROM
 
     with open('%s/%s' % (project_dir, 'template.cif'), 'w') as template_file:
         template_file.write(template.render(detector=detector_text, beamline=beamline_text, energy=energy, temperature=cryojet_temperature))
@@ -39,7 +42,15 @@ class Cif(Base):
         super(Cif, self).__init__()
 
     def process(self, **kwargs):
-        write_template_file(self.project_dir, beamline, detector, energy_in_kev, cryojet_temperature)
+        coll = Collection(kwargs['collection_id'])
+        if coll.beamline == 'MX2':
+            cj_temp_base = 'SR03ID01CJ01'
+        elif coll.beamline == 'MX1':
+            cj_temp_base = 'SR03BM01CJ01'
+        else:
+            raise Exception('unknown beamline - cannot determine cryojet base PV name')
+        cryojet_temperature = epics.PV('%s:SAMPLET_MON' % (cj_temp_base)).get()
+        write_template_file(self.project_dir, coll.beamline, coll.detector_type, coll.energy, cryojet_temperature)
 
 if __name__ == '__main__':
     run_test()
