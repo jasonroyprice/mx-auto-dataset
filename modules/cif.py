@@ -1,7 +1,8 @@
 from .base import Base
 from jinja2 import Environment, FileSystemLoader
 import epics
-from processing.models import Collection
+from processing.models import Collection, Processing, setup
+from beamline import variables as blconfig
 
 def run_test():
     beamline = 'MX2' # beamline in collection objecxt
@@ -42,7 +43,12 @@ class Cif(Base):
         super(Cif, self).__init__()
 
     def process(self, **kwargs):
-        coll = Collection(kwargs['collection_id'])
+        if kwargs['collection_id']:
+            coll = Collection(kwargs['collection_id'])
+        else:
+            setup(blconfig.get_database())
+            proc = Processing(kwargs['dataset_id'])
+            coll = Collection(str(proc.collection_id.id))
         if coll.beamline == 'MX2':
             cj_temp_base = 'SR03ID01CJ01'
         elif coll.beamline == 'MX1':
