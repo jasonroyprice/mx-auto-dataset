@@ -12,7 +12,7 @@ def run_test():
     project_dir = '.'
     write_template_file(project_dir, beamline, detector, energy_in_kev, cryojet_temperature)
 
-def write_template_file(project_dir, beamline, detector, energy_in_kev, cryojet_temperature):
+def write_template_file(project_dir, beamline, detector, energy_in_kev, cryojet_temperature, crystal_in_monochromator):
     if beamline == 'MX1':
         beamline_text = 'MX1 Beamline Australian Synchrotron'
     elif beamline == 'MX2':
@@ -34,8 +34,15 @@ def write_template_file(project_dir, beamline, detector, energy_in_kev, cryojet_
     KEV_TO_ANGSTROM = 12.398420
     energy = float(energy_in_kev)/KEV_TO_ANGSTROM
 
+    if crystal_in_monochromator == 'DC':
+        crystal_in_monochromator = 'Silicon Double Crystal'
+    elif crystal_in_monochromator == 'CC':
+        crystal_in_monochromator = 'Silicon Channel Cut Crystal'
+    else:
+        raise Exception('Unknown monochromator type')
+
     with open('%s/%s' % (project_dir, 'autoprocess.cif'), 'w') as template_file:
-        template_file.write(template.render(detector=detector_text, beamline=beamline_text, energy='%.6f' % energy, temperature=cryojet_temperature))
+        template_file.write(template.render(detector=detector_text, beamline=beamline_text, energy='%.6f' % energy, temperature=cryojet_temperature, crystal=crystal_in_monochromator))
 
 class Cif(Base):
 
@@ -49,14 +56,16 @@ class Cif(Base):
             setup(blconfig.get_database())
             proc = Processing(kwargs['dataset_id'])
             coll = Collection(str(proc.collection_id.id))
-        if coll.beamline == 'MX2':
-            cj_temp_base = 'SR03ID01CJ01'
-        elif coll.beamline == 'MX1':
-            cj_temp_base = 'SR03BM01CJ01'
-        else:
-            raise Exception('unknown beamline - cannot determine cryojet base PV name')
-        cryojet_temperature = epics.PV('%s:SAMPLET_MON' % (cj_temp_base)).get()
-        write_template_file(self.project_dir, coll.beamline, coll.detector_type, coll.energy, cryojet_temperature)
+
+        try:
+            cryo_temp = coll.cryo_temperature
+        except AttributeError:
+            cryo_temp = None
+        try:
+            crystal_in_monochromator = coll.crystal_in_monochromator
+        except AttributeError:
+            crystal_in_monochromator = None
+        write_template_file(self.project_dir, coll.beamline, coll.detector_type, coll.energy, cryo_temp, crystal_in_monochromator)
 
 if __name__ == '__main__':
     run_test()

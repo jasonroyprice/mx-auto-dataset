@@ -7,11 +7,15 @@ _exptl_absorpt_correction_T_min ? (not reported by XDS)
 _exptl_absorpt_correction_T_max ? (not reported by XDS)
 _exptl_absorpt_process_details    XDS (Kabsch, 1993)
 
+{% if temperature and temperature != None %}
 _diffrn_ambient_temperature       {{ temperature }} (2)
+{% endif %}
 _diffrn_radiation_wavelength      {{ energy }}
 _diffrn_radiation_type            Synchrotron
 _diffrn_radiation_source          '{{ beamline }}'
-_diffrn_radiation_monochromator   'Silicon Double Crystal'
+{% if crystal %}
+_diffrn_radiation_monochromator   '{{ crystal }}'
+{% endif %}
 _diffrn_measurement_device_type   '{{ detector }}'
 _diffrn_measurement_method        'Omega Scan'
 
