@@ -10,7 +10,7 @@ _exptl_absorpt_process_details    XDS (Kabsch, 1993)
 {% if temperature and temperature != None %}
 _diffrn_ambient_temperature       {{ temperature }} (2)
 {% endif %}
-_diffrn_radiation_wavelength      {{ energy }}
+_diffrn_radiation_wavelength      {{ wavelength }}
 _diffrn_radiation_type            Synchrotron
 _diffrn_radiation_source          '{{ beamline }}'
 {% if crystal %}

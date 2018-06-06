@@ -1,6 +1,5 @@
 from .base import Base
 from jinja2 import Environment, FileSystemLoader
-import epics
 from processing.models import Collection, Processing, setup
 from beamline import variables as blconfig
 
@@ -32,7 +31,7 @@ def write_template_file(project_dir, beamline, detector, energy_in_kev, cryojet_
 
     template = env.get_template('cx_template.cif')
     KEV_TO_ANGSTROM = 12.398420
-    energy = float(energy_in_kev)/KEV_TO_ANGSTROM
+    wavelength = KEV_TO_ANGSTROM/float(energy_in_kev)
 
     if crystal_in_monochromator == 'DC':
         crystal_in_monochromator = 'Silicon Double Crystal'
@@ -42,7 +41,7 @@ def write_template_file(project_dir, beamline, detector, energy_in_kev, cryojet_
         raise Exception('Unknown monochromator type')
 
     with open('%s/%s' % (project_dir, 'autoprocess.cif'), 'w') as template_file:
-        template_file.write(template.render(detector=detector_text, beamline=beamline_text, energy='%.6f' % energy, temperature=cryojet_temperature, crystal=crystal_in_monochromator))
+        template_file.write(template.render(detector=detector_text, beamline=beamline_text, wavelength='%.6f' % wavelength, temperature=cryojet_temperature, crystal=crystal_in_monochromator))
 
 class Cif(Base):
 
