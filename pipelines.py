@@ -87,7 +87,7 @@ if int (BLredis.get('SMX')) == 1:
     p1_noscale_reprocess = XDSme(p1n, p1n, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True, subtype= 'r')
     hsymm_noscale_reprocess = XDSme(hsn, hsn, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', subtype='r')
     reprocess.insert(1, CornerResolution(base))
-    del reprocess[8:9]
+    del reprocess[9:10]
     reprocess.insert(4, hsymm_noscale_reprocess)
     reprocess.insert(4, p1_noscale_reprocess)
     reprocess += sadabs_steps
