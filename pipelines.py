@@ -9,7 +9,7 @@ from beamline import redis as BLredis
 def default_pipeline(base):
     return [
     Setup(suffix='process', detector=blconfig.detector_type),
-    XDSme(base, '-a', subtype = 'p'),
+    XDSme(base, '-a', subtype='p'),
     XDSme('p1', '-5', '-a', p1=True),
     XDSme(base+'_NOANOM', '-5'),
     Pointless(base),
