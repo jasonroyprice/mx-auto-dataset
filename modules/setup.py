@@ -16,12 +16,17 @@ class Setup(Base):
     def __init__(self, suffix = '', *args, **kwargs):
         super(Setup, self).__init__()
         self.suffix = suffix
-        self.detector_type = kwargs.get('detector', 'adsc')
 
     def process(self, **kwargs):
         self.dataset.status = 'Starting...'
         self.dataset.completed = False
         self.dataset.save()
+        # set image list and project
+        collection = Collection(self.dataset.collection_id.id)
+        try:
+            self.detector_type = collection.detector_type
+        except AttributeError:
+            self.detector_type = 'adsc'
 
         # get details from file
         path, filename = os.path.split(self.dataset.last_frame)
@@ -34,7 +39,6 @@ class Setup(Base):
         spec = os.path.join(path, "%s*%s" % (prefix, ext))
 
         # set image list and project
-        collection = Collection(self.dataset.collection_id.id)
         self.output.images = get_valid_filenames(int(collection.start_frame),
                                                  int(collection.no_frames) + int(collection.start_frame), path, prefix,
                                                  ext, self.detector_type, self.dataset.last_frame)
