@@ -1,5 +1,5 @@
 from .base import Base
-from subprocess import call, check_output
+from subprocess import call, check_output, STDOUT, PIPE, Popen
 import os
 import shutil
 from beamline import redis as BLredis
@@ -7,6 +7,25 @@ from utils import get_xdsme_commandline
 import json
 import socket
 from beamline import variables as mxvars
+
+def parse_strategies(stdout_buffer):
+    strategies = []
+    while 1:
+        line = stdout_buffer.readline()
+        print line.rstrip()
+        if not line:
+            break
+        if 'starting at     total rotation     completeness        multiplicity of' in line:
+            for i in range(0,3):
+                line = stdout_buffer.readline()
+            linesplit = line.split()
+            print line.rstrip()
+            while len(linesplit):
+                strategies.append({'multiplicity':linesplit[3], 'start_angle': linesplit[0], 'wedge': linesplit[1], 'completeness': linesplit[2]})
+                line = stdout_buffer.readline()
+                print line.rstrip()
+                linesplit = line.split()
+    return strategies
 
 class Trigger(dict):
     pass
@@ -127,7 +146,8 @@ class XDSme(Base):
         args.extend(self.output.images)
 
         if args[0] == 'xdsme':
-            call(args, cwd=self.base_dir)
+            process = Popen(args, stdout=PIPE, stderr=STDOUT, cwd=self.base_dir)
+            print parse_strategies(process.stdout)
         else:
             job_definition = dict(
                 xds_command=args[1:], # arg[0] is the command to call
