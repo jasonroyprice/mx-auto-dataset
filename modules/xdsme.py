@@ -9,12 +9,25 @@ import socket
 from beamline import variables as mxvars
 
 def parse_strategies(stdout_buffer):
+    strategies_map = {}
     strategies = []
+    sg_num = ''
+    uc = None
     while 1:
         line = stdout_buffer.readline()
-        print line.rstrip()
         if not line:
             break
+        print line.rstrip()
+        if 'Assuming that the currently processed data satisfy' in line:
+            for i in range(0,2):
+                line = stdout_buffer.readline()
+                print line
+            linesplit = line.split() # SPACE_GROUP_NUMBER
+            sg_num = linesplit[1]
+            line = stdout_buffer.readline()
+            print line
+            linesplit = line.split() # UNIT_CELL_CONSTANTS
+            uc = linesplit[1:]
         if 'starting at     total rotation     completeness        multiplicity of' in line:
             for i in range(0,3):
                 line = stdout_buffer.readline()
@@ -25,7 +38,9 @@ def parse_strategies(stdout_buffer):
                 line = stdout_buffer.readline()
                 print line.rstrip()
                 linesplit = line.split()
-    return strategies
+    strategies_map['input'] = '%s:%s' % (sg_num, ':'.join(uc))
+    strategies_map['strategies'] = strategies
+    return strategies_map
 
 class Trigger(dict):
     pass
@@ -147,7 +162,16 @@ class XDSme(Base):
 
         if args[0] == 'xdsme':
             process = Popen(args, stdout=PIPE, stderr=STDOUT, cwd=self.base_dir)
-            print parse_strategies(process.stdout)
+            if '-3' not in args and '-4' not in args and '-5' not in args:
+                strategies_map = parse_strategies(process.stdout)
+                strat_key = '%s:%s:strategies:%04d:%s' % (mxvars.ID, mxvars.EPN, int(mxvars.redis.get('dataset:id')), strategies_map['input'])
+                if mxvars.redis.get(strat_key):
+                    print 'warning, strategy key %s will be changed from %s to %s' % (strat_key, mxvars.redis.get(strat_key), strategies_map['strategies'])
+                mxvars.redis.set(strat_key, json.dumps(strategies_map['strategies'])) # TODO this really should be sample ID-based instead of run label, and also have as a key the space group and unit cell used, but it'll do for now
+            else:
+                # no strategies, so skipping searching for them
+                out, err = process.communicate()
+                print out, err
         else:
             job_definition = dict(
                 xds_command=args[1:], # arg[0] is the command to call
