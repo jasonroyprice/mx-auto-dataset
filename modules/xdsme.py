@@ -7,6 +7,7 @@ from utils import get_xdsme_commandline
 import json
 import socket
 from beamline import variables as mxvars
+from processing.models import Collection, Processing, setup
 
 class Trigger(dict):
     pass
@@ -102,10 +103,10 @@ class XDSme(Base):
             self.dataset.retrigger = retrigger
             self.dataset.save()
 
-        self.run_xdsme(extra)
+        self.run_xdsme(extra, kwargs)
         self.move_files()
 
-    def run_xdsme(self, extra):
+    def run_xdsme(self, extra, kwargs):
         hostname = socket.gethostname().split('.')[0]
         args = get_xdsme_commandline(hostname)
         if int(BLredis.get('SMX')) == 1:
@@ -124,10 +125,17 @@ class XDSme(Base):
         if args[0] in ['xdsme', 'nice']:
             call(args, cwd=self.base_dir)
         else:
+            if kwargs['collection_id']:
+                coll = Collection(kwargs['collection_id'])
+            else:
+                setup(mxvars.get_database())
+                proc = Processing(kwargs['dataset_id'])
+                coll = Collection(str(proc.collection_id.id))
+
             job_definition = dict(
                 xds_command=args[1:], # arg[0] is the command to call
                 output_dir=self.base_dir,
-                beamline='MX2',
+                beamline=coll.beamline,
                 #beamline='MX2_VKUBE_test_STAGING', # optinally set beamline for configuration
                 labels=dict(
                         epn=mxvars.EPN,
