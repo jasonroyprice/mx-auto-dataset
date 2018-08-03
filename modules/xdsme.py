@@ -162,7 +162,7 @@ class XDSme(Base):
 
         if args[0] == 'xdsme':
             process = Popen(args, stdout=PIPE, stderr=STDOUT, cwd=self.base_dir)
-            if '-3' not in args and '-4' not in args and '-5' not in args:
+            if '--strategy' in args or '-S' in args:
                 strategies_map = parse_strategies(process.stdout)
                 strat_key = '%s:%s:strategies:%04d:%s' % (mxvars.ID, mxvars.EPN, int(mxvars.redis.get('dataset:id')), strategies_map['input'])
                 if mxvars.redis.get(strat_key):
