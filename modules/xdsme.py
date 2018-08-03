@@ -7,6 +7,7 @@ from utils import get_xdsme_commandline
 import json
 import socket
 from beamline import variables as mxvars
+from processing.models import Collection
 
 def parse_strategies(stdout_buffer):
     strategies_map = {}
@@ -164,7 +165,8 @@ class XDSme(Base):
             process = Popen(args, stdout=PIPE, stderr=STDOUT, cwd=self.base_dir)
             if '--strategy' in args or '-S' in args:
                 strategies_map = parse_strategies(process.stdout)
-                strat_key = '%s:%s:strategies:%04d:%s' % (mxvars.ID, mxvars.EPN, int(mxvars.redis.get('dataset:id')), strategies_map['input'])
+                coll = Collection(self.dataset.collection_id.id)
+                strat_key = '%s:%s:strategies:%04d:%s' % (coll.beamline, coll.EPN, int(coll.run_label), strategies_map['input'])
                 if mxvars.redis.get(strat_key):
                     print 'warning, strategy key %s will be changed from %s to %s' % (strat_key, mxvars.redis.get(strat_key), strategies_map['strategies'])
                 mxvars.redis.set(strat_key, json.dumps(strategies_map['strategies'])) # TODO this really should be sample ID-based instead of run label, and also have as a key the space group and unit cell used, but it'll do for now
