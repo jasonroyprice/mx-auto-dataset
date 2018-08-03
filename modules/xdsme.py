@@ -171,8 +171,8 @@ class XDSme(Base):
                     anom_key = 'anom'
                 strat_key = '%s:%s:strategies:%04d:%s:%s' % (coll.beamline, coll.EPN, int(coll.run_label), anom_key, strategies_map['input'])
                 if mxvars.redis.get(strat_key):
-                    print 'warning, strategy key %s will be changed from %s to %s' % (strat_key, mxvars.redis.get(strat_key), strategies_map['strategies'])
-                mxvars.redis.set(strat_key, json.dumps(strategies_map['strategies'])) # TODO this really should be sample ID-based instead of run label, and also have as a key the space group and unit cell used, but it'll do for now
+                    print 'warning, strategy key %s will be changed' % (strat_key)
+                mxvars.redis.set(strat_key, json.dumps(strategies_map['strategies'])) # TODO this really should be sample ID-based instead of run label
             else:
                 # no strategies, so skipping searching for them
                 out, err = process.communicate()
