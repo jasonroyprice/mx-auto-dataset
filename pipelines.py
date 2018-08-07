@@ -28,7 +28,7 @@ def reprocess(base):
     return [
     Setup(suffix='retrigger', detector=blconfig.detector_type),
     Retrigger(),
-    XDSme(base, '-5', '-a', subtype = 'r'),
+    XDSme(base, '-3', '-a', subtype = 'r'),
     XDSme('p1', '-5', '-a', p1=True),
     XDSme(base+'_NOANOM', '-5'),
     Pointless(base),
@@ -93,10 +93,12 @@ if int (BLredis.get('SMX')) == 1:
         return [
         Setup(suffix='process', detector=blconfig.detector_type),
         CornerResolution(base),
-        XDSme(base, '-a', '-i', delphi, subtype = 'p'),
+        XDSme(base, '-a', '--strategy', '--p1-strategy', '-i', delphi, subtype = 'p'),
+        XDSme(base, '-3', '-a', '--strategy', '--highest-symm-strategy', '-i', delphi, subtype='p'),
         XDSme('p1', '-5', '-a', p1=True),
         XDSme('hsymm_noscale', '-5', '-a', '-i', turn_off_correct_scaling),
         XDSme('p1_noscale', '-5', '-a', '-i', turn_off_correct_scaling, p1=True),
+        XDSme(base+'_NOANOM', '-3', '--strategy', '--highest-symm-strategy', '-i', delphi),
         Pointless(base, nonchiral=True),
         Aimless(base),
         Truncate(base),
