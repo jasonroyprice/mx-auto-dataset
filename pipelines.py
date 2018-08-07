@@ -12,7 +12,7 @@ def default_pipeline(base):
     XDSme(base, '-a', '--strategy', '--p1-strategy', subtype='p'),
     XDSme(base, '-3', '-a', '--strategy', '--highest-symm-strategy', subtype='p'),
     XDSme('p1', '-5', '-a', p1=True),
-    XDSme(base+'_NOANOM', '-5'),
+    XDSme(base+'_NOANOM', '-3', '--strategy', '--highest-symm-strategy'),
     Pointless(base),
     Aimless(base),
     Truncate(base),
