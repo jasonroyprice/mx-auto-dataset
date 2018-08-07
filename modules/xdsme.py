@@ -172,7 +172,8 @@ class XDSme(Base):
                 strat_key = '%s:%s:strategies:%04d:%s:%s' % (coll.beamline, coll.EPN, int(coll.run_label), anom_key, strategies_map['input'])
                 if mxvars.redis.get(strat_key):
                     print 'warning, strategy key %s will be changed' % (strat_key)
-                mxvars.redis.set(strat_key, json.dumps(strategies_map['strategies'])) # TODO this really should be sample ID-based instead of run label
+                ex = 60*60*24*30*3 # seconds in 3 months
+                mxvars.redis.set(strat_key, json.dumps(strategies_map['strategies']), ex=ex) # TODO this really should be sample ID-based instead of run label
             else:
                 # no strategies, so skipping searching for them
                 out, err = process.communicate()
