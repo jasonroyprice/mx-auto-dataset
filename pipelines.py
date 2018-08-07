@@ -39,7 +39,7 @@ def reprocess(base):
 reprocess = reprocess(base)
 
 # to use unit cell and spacegroup
-def reprocess_ucsg(base='hsymmucsb'):
+def reprocess_ucsg(base='hsymmucsg'):
     return [
     Setup(suffix='retrigger', detector=blconfig.detector_type),
     Retrigger(3),
