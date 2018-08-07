@@ -4,6 +4,7 @@ from modules.ccp4 import Pointless, Aimless, Truncate
 from modules.other import Autorickshaw, CornerResolution
 from modules.sadabs import Xds2sad, Sadabs, Xprep, XprepSummary
 from beamline import variables as blconfig
+from beamline import redis as BLredis
 
 def default_pipeline(base):
     return [
@@ -66,66 +67,98 @@ def reprocess_from_start(base):
 
 reprocess_from_start = reprocess_from_start(base)
 
-from beamline import redis as BLredis
 if int (BLredis.get('SMX')) == 1:
-    default.insert(1, CornerResolution(base))
-
     if blconfig.detector_type == 'eiger':
         delphi = 'DELPHI=15'
     else:
         delphi = 'DELPHI=45'
-    from_start_delphi = XDSme(base, '-a', '-i', delphi, subtype='p')
-    default[2] = from_start_delphi
-    p1_noscale = XDSme('p1_noscale', '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True)
-    hsymm_noscale = XDSme('hsymm_noscale', '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0')
-    default[4] = p1_noscale
-    default.insert(4, hsymm_noscale)
+
     x = Xds2sad('xds2sad', filename='XDS_ASCII.HKL_p1_noscale')
     w = Sadabs('Sadabs-w', absorber_strength = 'weak')
     m = Sadabs('Sadabs-m', absorber_strength = 'moderate')
     s = Sadabs('Sadabs-s', absorber_strength = 'strong')
     sadabs_steps = [x,w,m,s]
-    default += sadabs_steps
     xp_p1 = Xprep('xprep', filename = 'XDS_ASCII.HKL_p1', suffix = 'p1')
     xp_p1_noscale = Xprep('xprep_p1_scale', filename = 'XDS_ASCII.HKL_p1_noscale', suffix = 'p1_noscale')
     xp_sadabs_w = Xprep('xprep_sadabsw', filename = 'sadabs_w/sad.hkl', suffix = 'sadabs_w')
     xp_sadabs_m = Xprep('xprep_sadabsm', filename = 'sadabs_m/sad.hkl', suffix = 'sadabs_m')
     xp_sadabs_s = Xprep('xprep_sadabss', filename = 'sadabs_s/sad.hkl', suffix = 'sadabs_s')
-
     xprep_steps = [xp_p1, xp_p1_noscale, xp_sadabs_w, xp_sadabs_m, xp_sadabs_s]
+    xp_summary = [XprepSummary()]
+
+    turn_off_correct_scaling = 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0'
+
+    def default_smx(base):
+        return [
+        Setup(suffix='process', detector=blconfig.detector_type),
+        CornerResolution(base),
+        XDSme(base, '-a', '-i', delphi, subtype = 'p'),
+        XDSme('p1', '-5', '-a', p1=True),
+        XDSme('hsymm_noscale', '-5', '-a', '-i', turn_off_correct_scaling),
+        XDSme('p1_noscale', '-5', '-a', '-i', turn_off_correct_scaling, p1=True),
+        Pointless(base, nonchiral=True),
+        Aimless(base),
+        Truncate(base),
+        Autorickshaw(base)
+    ]
+    default = default_smx(base)
+    default += sadabs_steps
     default += xprep_steps
+    default += xp_summary
 
-    xp_summary = XprepSummary()
-    default.append(xp_summary)
-
-    p1_noscale_reprocess = XDSme('p1_noscale', '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True, subtype= 'r')
-    hsymm_noscale_reprocess = XDSme('hsymm_noscale', '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', subtype='r')
-    reprocess.insert(1, CornerResolution(base))
-    del reprocess[5:6]
-    reprocess.insert(3, hsymm_noscale_reprocess)
-    reprocess.insert(4, p1_noscale_reprocess)
+    def reprocess_smx(base):
+        return [
+        Setup(suffix='process', detector=blconfig.detector_type),
+        CornerResolution(base),
+        Retrigger(),
+        XDSme('hsymm_noscale', '-5', '-a', '-i', turn_off_correct_scaling, subtype='r'),
+        XDSme('p1_noscale', '-5', '-a', '-i', turn_off_correct_scaling, p1=True, subtype='r'),
+        XDSme(base, '-a', '-i', delphi, subtype='r'),
+        XDSme('p1', '-5', '-a', p1=True, subtype='r'),
+        Pointless(base, nonchiral=True),
+        Aimless(base),
+        Truncate(base),
+        Autorickshaw(base)
+    ]
+    reprocess = reprocess_smx(base)
     reprocess += sadabs_steps
     reprocess += xprep_steps
-    reprocess.append(xp_summary)
+    reprocess += xp_summary
 
-    p1_noscale_ucsg = XDSme('p1_noscale', '-3', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True, subtype= 'r')
-    hsymm_noscale_ucsg = XDSme('hsymm_noscale', '-3', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', subtype='r')
-    reprocess_ucsg.insert(1, CornerResolution(base2))
-    del reprocess_ucsg[3:6]
-    reprocess_ucsg.insert(3, hsymm_noscale_ucsg)
-    reprocess_ucsg.insert(3, p1_noscale_ucsg)
+    base2='hsymmucsg'
+    def reprocess_ucsg_smx(base2):
+        return [
+        Setup(suffix='process', detector=blconfig.detector_type),
+        CornerResolution(base2),
+        Retrigger(),
+        XDSme('p1_noscale', '-3', '-a', '-i', turn_off_correct_scaling, p1=True, subtype='r'),
+        XDSme('hsymm_noscale', '-3', '-a', '-i', turn_off_correct_scaling, subtype='r'),
+        Pointless(base, nonchiral=True),
+        Aimless(base),
+        Truncate(base),
+        Autorickshaw(base)
+    ]
+    reprocess_ucsg = reprocess_ucsg_smx(base2)
     reprocess_ucsg += sadabs_steps
     reprocess_ucsg += xprep_steps
-    reprocess_ucsg.append(xp_summary)
+    reprocess_ucsg += xp_summary
 
-    from_start_delphi_reprocess = XDSme(base, '-a', '-i', delphi, subtype='r')
-    reprocess_from_start.insert(1, CornerResolution(base))
-    del reprocess_from_start[4:5]
-    reprocess_from_start[2] = from_start_delphi_reprocess
-    reprocess_from_start.insert(4, p1_noscale_reprocess)
-    reprocess_from_start.insert(5, hsymm_noscale_reprocess)
+    def reprocess_from_start_smx(base):
+        return [
+        Setup(suffix='process', detector=blconfig.detector_type),
+        CornerResolution(base),
+        XDSme(base, '-a', '-i', delphi, subtype='r'),
+        XDSme('p1', '-5', '-a', p1=True, subtype='r'),
+        XDSme('p1_noscale', '-5', '-a', '-i', turn_off_correct_scaling, p1=True, subtype='r'),
+        XDSme('hsymm_noscale', '-5', '-a', '-i', turn_off_correct_scaling, subtype='r'),
+        Pointless(base, nonchiral=True),
+        Aimless(base),
+        Truncate(base),
+        Autorickshaw(base)
+    ]
+    reprocess_from_start = reprocess_from_start_smx(base)
     reprocess_from_start += sadabs_steps
     reprocess_from_start += xprep_steps
-    reprocess_from_start.append(xp_summary)
+    reprocess_from_start += xp_summary
 
 pipelines = dict(filter(lambda x: isinstance(x[1], list), locals().items()))
