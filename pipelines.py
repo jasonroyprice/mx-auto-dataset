@@ -121,7 +121,7 @@ if int (BLredis.get('SMX')) == 1:
         Pointless(base, nonchiral=True),
         Aimless(base),
         Truncate(base),
-        XDSme('p1', '-3', '-a', '--strategy', '--p1-strategy', p1=True, subtype='r'),
+        XDSme('p1', '-3', '-a', '--strategy', '--p1-strategy', '-i', delphi, p1=True, subtype='r'),
         Autorickshaw(base)
     ]
     reprocess = reprocess_smx(base)
@@ -139,8 +139,9 @@ if int (BLredis.get('SMX')) == 1:
         Pointless(base, nonchiral=True),
         Aimless(base),
         Truncate(base),
-        XDSme('p1_noscale', '-3', '-a', '--strategy', '-i', turn_off_correct_scaling, p1=True, subtype='r'),
-        XDSme('hsymm_noscale', '-3', '-a', '--strategy', '-i', turn_off_correct_scaling, subtype='r'),
+        XDSme(base, '-3', '--strategy', '-i', delphi, subtype='r'),
+        XDSme('p1_noscale', '-5', '-a', '-i', turn_off_correct_scaling, p1=True, subtype='r'),
+        XDSme('hsymm_noscale', '-5', '-a', '-i', turn_off_correct_scaling, subtype='r'),
         Autorickshaw(base)
     ]
     reprocess_ucsg = reprocess_ucsg_smx(base2)
