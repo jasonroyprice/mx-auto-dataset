@@ -39,6 +39,9 @@ def parse_strategies(stdout_buffer):
                 line = stdout_buffer.readline()
                 print line.rstrip()
                 linesplit = line.split()
+
+    if not uc:
+        raise Exception('No unit cell information available')
     strategies_map['input'] = '%s:%s' % (sg_num, ':'.join(uc))
     strategies_map['strategies'] = strategies
     return strategies_map
