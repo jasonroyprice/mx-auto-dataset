@@ -13,7 +13,7 @@ def default_pipeline(base):
     Pointless(base),
     Aimless(base),
     Truncate(base),
-    XDSme('p1', '-5', '-a', '--strategy', '--p1-strategy', '--skip_defpix', p1=True),
+    XDSme('p1', '-3', '-a', '--strategy', '--p1-strategy', '--skip_defpix', p1=True),
     XDSme(base+'_NOANOM', '-3', '--strategy', '--highest-symm-strategy', '--skip_defpix'),
     Autorickshaw(base)
 ]
