@@ -74,12 +74,13 @@ class XDSme(Base):
         parser.add_argument('--space_group')
         parser.add_argument('--from_start')
         parser.add_argument('--strategy')
+        parser.add_argument('--skip_defpix', action='store_true')
 
     def process(self, first_frame, last_frame,
                 low_resolution, high_resolution,
                 ice, weak, slow, brute,
                 unit_cell, space_group,
-                from_start,strategy,
+                from_start,strategy,skip_defpix,
                 **kwargs):
         self.dataset.status = "XDS %s" % self.run_name
         if self.subtype is not None:
@@ -135,6 +136,8 @@ class XDSme(Base):
         self.strategy = False
         if strategy:
             self.strategy = True
+        if skip_defpix:
+            extra.extend(['--skip_defpix'])
 
         if retrigger:
             self.dataset.retrigger = retrigger

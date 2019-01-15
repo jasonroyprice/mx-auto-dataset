@@ -9,13 +9,12 @@ from beamline import redis as BLredis
 def default_pipeline(base):
     return [
     Setup(suffix='process', detector=blconfig.detector_type),
-    XDSme(base, '-a', '--strategy', '--p1-strategy', subtype='p'),
+    XDSme(base, '-a', '--strategy', '--highest-symm-strategy', '--skip_defpix', subtype='p'),
     Pointless(base),
     Aimless(base),
     Truncate(base),
-    XDSme(base, '-3', '-a', '--strategy', '--highest-symm-strategy', subtype='p'),
-    XDSme('p1', '-5', '-a', p1=True),
-    XDSme(base+'_NOANOM', '-3', '--strategy', '--highest-symm-strategy'),
+    XDSme('p1', '-5', '-a', '--strategy', '--p1-strategy', '--skip_defpix', p1=True),
+    XDSme(base+'_NOANOM', '-3', '--strategy', '--highest-symm-strategy', '--skip_defpix'),
     Autorickshaw(base)
 ]
 
@@ -28,12 +27,12 @@ def reprocess(base):
     return [
     Setup(suffix='retrigger', detector=blconfig.detector_type),
     Retrigger(),
-    XDSme(base, '-3', '-a', '--strategy', '--highest-symm-strategy', subtype = 'r'),
+    XDSme(base, '-3', '-a', '--strategy', '--highest-symm-strategy', '--skip_defpix', subtype = 'r'),
     Pointless(base),
     Aimless(base),
     Truncate(base),
-    XDSme('p1', '-3', '-a', '--strategy', '--p1-strategy', p1=True),
-    XDSme(base+'_NOANOM', '-3', '--strategy', '--highest-symm-strategy'),
+    XDSme('p1', '-3', '-a', '--strategy', '--p1-strategy', '--skip_defpix', p1=True),
+    XDSme(base+'_NOANOM', '-3', '--strategy', '--highest-symm-strategy', '--skip_defpix'),
     Autorickshaw(base)
 ]
 reprocess = reprocess(base)
@@ -43,12 +42,12 @@ def reprocess_ucsg(base='hsymmucsg'):
     return [
     Setup(suffix='retrigger', detector=blconfig.detector_type),
     Retrigger(3),
-    XDSme(base, '-3', '--strategy', '-a', subtype = 'r'),
+    XDSme(base, '-3', '--strategy', '-a', '--skip_defpix', subtype = 'r'),
     Pointless(base),
     Aimless(base),
     Truncate(base),
-    XDSme('p1', '-3', '-a', '--strategy', p1=True),
-    XDSme(base+'_NOANOM', '-3', '--strategy'),
+    XDSme('p1', '-3', '-a', '--strategy', '--skip_defpix', p1=True),
+    XDSme(base+'_NOANOM', '-3', '--strategy', '--skip_defpix'),
     Autorickshaw(base)
 ]
 reprocess_ucsg = reprocess_ucsg()
@@ -57,13 +56,13 @@ reprocess_ucsg = reprocess_ucsg()
 def reprocess_from_start(base):
     return [
     Setup(suffix='retrigger', detector=blconfig.detector_type),
-    XDSme(base, '-a', '--strategy', '--p1-strategy', subtype = 'r'),
+    XDSme(base, '-a', '--strategy', '--p1-strategy', '--skip_defpix', subtype = 'r'),
     Pointless(base),
     Aimless(base),
     Truncate(base),
-    XDSme(base, '-3', '-a', '--strategy', '--highest-symm-strategy', subtype='p'),
+    XDSme(base, '-3', '-a', '--strategy', '--highest-symm-strategy', '--skip_defpix', subtype='p'),
     XDSme('p1', '-5', '-a', p1=True),
-    XDSme(base+'_NOANOM', '-3', '--strategy', '--highest-symm-strategy'),
+    XDSme(base+'_NOANOM', '-3', '--strategy', '--highest-symm-strategy', '--skip_defpix'),
     Autorickshaw(base)
 ]
 
@@ -94,15 +93,15 @@ if int (BLredis.get('SMX')) == 1:
         return [
         Setup(suffix='process', detector=blconfig.detector_type),
         CornerResolution(base),
-        XDSme(base, '-a', '--strategy', '--p1-strategy', '-i', delphi, subtype = 'p'),
+        XDSme(base, '-a', '--strategy', '--p1-strategy', '-i', delphi, '--skip_defpix', subtype = 'p'),
         Pointless(base, nonchiral=True),
         Aimless(base),
         Truncate(base),
-        XDSme(base, '-3', '-a', '--strategy', '--highest-symm-strategy', '-i', delphi, subtype='p'),
+        XDSme(base, '-3', '-a', '--strategy', '--highest-symm-strategy', '-i', delphi, '--skip_defpix', subtype='p'),
         XDSme('p1', '-5', '-a', p1=True),
         XDSme('hsymm_noscale', '-5', '-a', '-i', turn_off_correct_scaling),
         XDSme('p1_noscale', '-5', '-a', '-i', turn_off_correct_scaling, p1=True),
-        XDSme(base+'_NOANOM', '-3', '--strategy', '--highest-symm-strategy', '-i', delphi),
+        XDSme(base+'_NOANOM', '-3', '--strategy', '--highest-symm-strategy', '-i', delphi, '--skip_defpix'),
         Autorickshaw(base)
     ]
     default = default_smx(base)
@@ -117,11 +116,11 @@ if int (BLredis.get('SMX')) == 1:
         Retrigger(),
         XDSme('hsymm_noscale', '-5', '-a', '-i', turn_off_correct_scaling, subtype='r'),
         XDSme('p1_noscale', '-5', '-a', '-i', turn_off_correct_scaling, p1=True, subtype='r'),
-        XDSme(base, '-a', '--strategy', '--highest-symm-strategy', '-i', delphi, subtype='r'),
+        XDSme(base, '-a', '--strategy', '--highest-symm-strategy', '-i', delphi, '--skip_defpix', subtype='r'),
         Pointless(base, nonchiral=True),
         Aimless(base),
         Truncate(base),
-        XDSme('p1', '-3', '-a', '--strategy', '--p1-strategy', '-i', delphi, p1=True, subtype='r'),
+        XDSme('p1', '-3', '-a', '--strategy', '--p1-strategy', '-i', delphi, '--skip_defpix', p1=True, subtype='r'),
         Autorickshaw(base)
     ]
     reprocess = reprocess_smx(base)
@@ -135,11 +134,11 @@ if int (BLredis.get('SMX')) == 1:
         Setup(suffix='process', detector=blconfig.detector_type),
         CornerResolution(base2),
         Retrigger(),
-        XDSme(base, '-a', '--strategy', '-i', delphi, subtype='r'),
+        XDSme(base, '-a', '--strategy', '-i', delphi, '--skip_defpix', subtype='r'),
         Pointless(base, nonchiral=True),
         Aimless(base),
         Truncate(base),
-        XDSme(base, '-3', '--strategy', '-i', delphi, subtype='r'),
+        XDSme(base, '-3', '--strategy', '-i', delphi, '--skip_defpix', subtype='r'),
         XDSme('p1_noscale', '-5', '-a', '-i', turn_off_correct_scaling, p1=True, subtype='r'),
         XDSme('hsymm_noscale', '-5', '-a', '-i', turn_off_correct_scaling, subtype='r'),
         Autorickshaw(base)
@@ -153,11 +152,11 @@ if int (BLredis.get('SMX')) == 1:
         return [
         Setup(suffix='process', detector=blconfig.detector_type),
         CornerResolution(base),
-        XDSme(base, '-a', '--strategy', '--highest-symm-strategy', '-i', delphi, subtype='r'),
+        XDSme(base, '-a', '--strategy', '--highest-symm-strategy', '-i', delphi, '--skip_defpix', subtype='r'),
         Pointless(base, nonchiral=True),
         Aimless(base),
         Truncate(base),
-        XDSme('p1', '-3', '-a', '--strategy', '--p1-strategy', p1=True, subtype='r'),
+        XDSme('p1', '-3', '-a', '--strategy', '--p1-strategy', '--skip_defpix', p1=True, subtype='r'),
         XDSme('p1_noscale', '-5', '-a', '-i', turn_off_correct_scaling, p1=True, subtype='r'),
         XDSme('hsymm_noscale', '-5', '-a', '-i', turn_off_correct_scaling, subtype='r'),
         Autorickshaw(base)
