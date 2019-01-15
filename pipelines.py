@@ -85,8 +85,6 @@ if int (BLredis.get('SMX')) == 1:
     xprep_steps = [xp_p1, xp_p1_noscale, xp_sadabs_w, xp_sadabs_m, xp_sadabs_s]
     xp_summary = [XprepSummary()]
 
-    turn_off_correct_scaling = 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0'
-
     def default_smx(base):
         return [
         Setup(suffix='process', detector=blconfig.detector_type),
@@ -96,9 +94,6 @@ if int (BLredis.get('SMX')) == 1:
         Aimless(base),
         Truncate(base),
         XDSme('p1', '-3', '-a', '--strategy', '--p1-strategy', '-i', delphi, '--skip_defpix', subtype='p', p1=True),
-        XDSme('hsymm_noscale', '-5', '-a', '-i', turn_off_correct_scaling),
-        XDSme('p1_noscale', '-5', '-a', '-i', turn_off_correct_scaling, p1=True),
-        XDSme(base+'_NOANOM', '-3', '--strategy', '--highest-symm-strategy', '-i', delphi, '--skip_defpix'),
         Autorickshaw(base)
     ]
     default = default_smx(base)
@@ -111,8 +106,6 @@ if int (BLredis.get('SMX')) == 1:
         Setup(suffix='process', detector=blconfig.detector_type),
         CornerResolution(base),
         Retrigger(),
-        XDSme('hsymm_noscale', '-5', '-a', '-i', turn_off_correct_scaling, subtype='r'),
-        XDSme('p1_noscale', '-5', '-a', '-i', turn_off_correct_scaling, p1=True, subtype='r'),
         XDSme(base, '-a', '--strategy', '--highest-symm-strategy', '-i', delphi, '--skip_defpix', subtype='r'),
         Pointless(base, nonchiral=True),
         Aimless(base),
@@ -136,8 +129,6 @@ if int (BLredis.get('SMX')) == 1:
         Aimless(base),
         Truncate(base),
         XDSme(base, '-3', '--strategy', '-i', delphi, '--skip_defpix', subtype='r'),
-        XDSme('p1_noscale', '-5', '-a', '-i', turn_off_correct_scaling, p1=True, subtype='r'),
-        XDSme('hsymm_noscale', '-5', '-a', '-i', turn_off_correct_scaling, subtype='r'),
         Autorickshaw(base)
     ]
     reprocess_ucsg = reprocess_ucsg_smx(base2)
@@ -154,8 +145,6 @@ if int (BLredis.get('SMX')) == 1:
         Aimless(base),
         Truncate(base),
         XDSme('p1', '-3', '-a', '--strategy', '--p1-strategy', '--skip_defpix', p1=True, subtype='r'),
-        XDSme('p1_noscale', '-5', '-a', '-i', turn_off_correct_scaling, p1=True, subtype='r'),
-        XDSme('hsymm_noscale', '-5', '-a', '-i', turn_off_correct_scaling, subtype='r'),
         Autorickshaw(base)
     ]
     reprocess_from_start = reprocess_from_start_smx(base)
