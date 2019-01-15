@@ -46,7 +46,6 @@ def reprocess_ucsg(base='hsymmucsg'):
     Pointless(base),
     Aimless(base),
     Truncate(base),
-    XDSme('p1', '-3', '-a', '--strategy', '--skip_defpix', p1=True),
     XDSme(base+'_NOANOM', '-3', '--strategy', '--skip_defpix'),
     Autorickshaw(base)
 ]
@@ -56,12 +55,11 @@ reprocess_ucsg = reprocess_ucsg()
 def reprocess_from_start(base):
     return [
     Setup(suffix='retrigger', detector=blconfig.detector_type),
-    XDSme(base, '-a', '--strategy', '--p1-strategy', '--skip_defpix', subtype = 'r'),
+    XDSme(base, '-a', '--strategy', '--highest-symm-strategy', '--skip_defpix', subtype = 'r'),
     Pointless(base),
     Aimless(base),
     Truncate(base),
-    XDSme(base, '-3', '-a', '--strategy', '--highest-symm-strategy', '--skip_defpix', subtype='p'),
-    XDSme('p1', '-5', '-a', p1=True),
+    XDSme('p1', '-3', '-a', '--strategy', '--p1-strategy', '--skip_defpix', p1=True),
     XDSme(base+'_NOANOM', '-3', '--strategy', '--highest-symm-strategy', '--skip_defpix'),
     Autorickshaw(base)
 ]
@@ -93,12 +91,11 @@ if int (BLredis.get('SMX')) == 1:
         return [
         Setup(suffix='process', detector=blconfig.detector_type),
         CornerResolution(base),
-        XDSme(base, '-a', '--strategy', '--p1-strategy', '-i', delphi, '--skip_defpix', subtype = 'p'),
+        XDSme(base, '-a', '--strategy', '--highest-symm-strategy', '-i', delphi, '--skip_defpix', subtype = 'p'),
         Pointless(base, nonchiral=True),
         Aimless(base),
         Truncate(base),
-        XDSme(base, '-3', '-a', '--strategy', '--highest-symm-strategy', '-i', delphi, '--skip_defpix', subtype='p'),
-        XDSme('p1', '-5', '-a', p1=True),
+        XDSme('p1', '-3', '-a', '--strategy', '--p1-strategy', '-i', delphi, '--skip_defpix', subtype='p', p1=True),
         XDSme('hsymm_noscale', '-5', '-a', '-i', turn_off_correct_scaling),
         XDSme('p1_noscale', '-5', '-a', '-i', turn_off_correct_scaling, p1=True),
         XDSme(base+'_NOANOM', '-3', '--strategy', '--highest-symm-strategy', '-i', delphi, '--skip_defpix'),
