@@ -72,19 +72,6 @@ if int (BLredis.get('SMX')) == 1:
     else:
         delphi = 'DELPHI=45'
 
-    x = Xds2sad('xds2sad', filename='XDS_ASCII.HKL_p1_noscale')
-    w = Sadabs('Sadabs-w', absorber_strength = 'weak')
-    m = Sadabs('Sadabs-m', absorber_strength = 'moderate')
-    s = Sadabs('Sadabs-s', absorber_strength = 'strong')
-    sadabs_steps = [x,w,m,s]
-    xp_p1 = Xprep('xprep', filename = 'XDS_ASCII.HKL_p1', suffix = 'p1')
-    xp_p1_noscale = Xprep('xprep_p1_scale', filename = 'XDS_ASCII.HKL_p1_noscale', suffix = 'p1_noscale')
-    xp_sadabs_w = Xprep('xprep_sadabsw', filename = 'sadabs_w/sad.hkl', suffix = 'sadabs_w')
-    xp_sadabs_m = Xprep('xprep_sadabsm', filename = 'sadabs_m/sad.hkl', suffix = 'sadabs_m')
-    xp_sadabs_s = Xprep('xprep_sadabss', filename = 'sadabs_s/sad.hkl', suffix = 'sadabs_s')
-    xprep_steps = [xp_p1, xp_p1_noscale, xp_sadabs_w, xp_sadabs_m, xp_sadabs_s]
-    xp_summary = [XprepSummary()]
-
     def default_smx(base):
         return [
         Setup(suffix='process', detector=blconfig.detector_type),
@@ -97,9 +84,6 @@ if int (BLredis.get('SMX')) == 1:
         Autorickshaw(base)
     ]
     default = default_smx(base)
-    default += sadabs_steps
-    default += xprep_steps
-    default += xp_summary
 
     def reprocess_smx(base):
         return [
@@ -114,9 +98,6 @@ if int (BLredis.get('SMX')) == 1:
         Autorickshaw(base)
     ]
     reprocess = reprocess_smx(base)
-    reprocess += sadabs_steps
-    reprocess += xprep_steps
-    reprocess += xp_summary
 
     base2='hsymmucsg'
     def reprocess_ucsg_smx(base2):
@@ -132,9 +113,6 @@ if int (BLredis.get('SMX')) == 1:
         Autorickshaw(base)
     ]
     reprocess_ucsg = reprocess_ucsg_smx(base2)
-    reprocess_ucsg += sadabs_steps
-    reprocess_ucsg += xprep_steps
-    reprocess_ucsg += xp_summary
 
     def reprocess_from_start_smx(base):
         return [
@@ -148,8 +126,5 @@ if int (BLredis.get('SMX')) == 1:
         Autorickshaw(base)
     ]
     reprocess_from_start = reprocess_from_start_smx(base)
-    reprocess_from_start += sadabs_steps
-    reprocess_from_start += xprep_steps
-    reprocess_from_start += xp_summary
 
 pipelines = dict(filter(lambda x: isinstance(x[1], list), locals().items()))
