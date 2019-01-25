@@ -78,12 +78,20 @@ class XDSme(Base):
         parser.add_argument('--from_start')
         parser.add_argument('--strategy')
         parser.add_argument('--skip_defpix', action='store_true')
+        parser.add_argument('--minimum_total_spindle_angle', default='30')
+        parser.add_argument('--maximum_total_spindle_angle', default='360')
+        parser.add_argument('--increment_total_spindle_angle', default='30')
+        parser.add_argument('--minimum_start_spindle_angle')
+        parser.add_argument('--maximum_start_spindle_angle')
+        parser.add_argument('--increment_start_spindle_angle')
 
     def process(self, first_frame, last_frame,
                 low_resolution, high_resolution,
                 ice, weak, slow, brute,
                 unit_cell, space_group,
                 from_start,strategy,skip_defpix,
+                minimum_total_spindle_angle, maximum_total_spindle_angle, increment_total_spindle_angle,
+                minimum_start_spindle_angle, maximum_start_spindle_angle, increment_start_spindle_angle,
                 **kwargs):
         self.dataset.status = "XDS %s" % self.run_name
         if self.subtype is not None:
@@ -141,6 +149,19 @@ class XDSme(Base):
             self.strategy = True
         if skip_defpix:
             extra.extend(['--skip_defpix'])
+
+        if minimum_total_spindle_angle:
+            extra.extend(['--minimum_total_spindle_angle', minimum_total_spindle_angle])
+        if maximum_total_spindle_angle:
+            extra.extend(['--maximum_total_spindle_angle', maximum_total_spindle_angle])
+        if increment_total_spindle_angle:
+            extra.extend(['--increment_total_spindle_angle', increment_total_spindle_angle])
+        if minimum_start_spindle_angle:
+            extra.extend(['--minimum_start_spindle_angle', minimum_start_spindle_angle])
+        if maximum_start_spindle_angle:
+            extra.extend(['--maximum_start_spindle_angle', maximum_start_spindle_angle])
+        if increment_start_spindle_angle:
+            extra.extend(['--increment_start_spindle_angle', increment_start_spindle_angle])
 
         if retrigger:
             self.dataset.retrigger = retrigger
