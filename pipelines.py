@@ -13,7 +13,6 @@ def default_pipeline(base):
     Pointless(base),
     Aimless(base),
     Truncate(base),
-    XDSme('p1', '-3', '-a', '--strategy', '--p1-strategy', '--skip_defpix', p1=True),
     Autorickshaw(base)
 ]
 
@@ -30,7 +29,6 @@ def reprocess(base):
     Pointless(base),
     Aimless(base),
     Truncate(base),
-    XDSme('p1', '-3', '-a', '--strategy', '--p1-strategy', '--skip_defpix', p1=True),
     Autorickshaw(base)
 ]
 reprocess = reprocess(base)
@@ -56,7 +54,6 @@ def reprocess_from_start(base):
     Pointless(base),
     Aimless(base),
     Truncate(base),
-    XDSme('p1', '-3', '-a', '--strategy', '--p1-strategy', '--skip_defpix', p1=True),
     Autorickshaw(base)
 ]
 
@@ -76,7 +73,6 @@ if int (BLredis.get('SMX')) == 1:
         Pointless(base, nonchiral=True),
         Aimless(base),
         Truncate(base),
-        XDSme('p1', '-3', '-a', '--strategy', '--p1-strategy', '-i', delphi, '--skip_defpix', subtype='p', p1=True),
         Autorickshaw(base)
     ]
     default = default_smx(base)
@@ -90,7 +86,6 @@ if int (BLredis.get('SMX')) == 1:
         Pointless(base, nonchiral=True),
         Aimless(base),
         Truncate(base),
-        XDSme('p1', '-3', '-a', '--strategy', '--p1-strategy', '-i', delphi, '--skip_defpix', p1=True, subtype='r'),
         Autorickshaw(base)
     ]
     reprocess = reprocess_smx(base)
@@ -118,7 +113,6 @@ if int (BLredis.get('SMX')) == 1:
         Pointless(base, nonchiral=True),
         Aimless(base),
         Truncate(base),
-        XDSme('p1', '-3', '-a', '--strategy', '--p1-strategy', '--skip_defpix', p1=True, subtype='r'),
         Autorickshaw(base)
     ]
     reprocess_from_start = reprocess_from_start_smx(base)
