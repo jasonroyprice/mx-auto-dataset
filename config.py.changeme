@@ -4,11 +4,11 @@ REDIS_QUEUE_NAME="autodataset"
 PIPELINE_NAME="PRODUCTION"
 PIPELINE_PATH='/xray/software/Python/libraries/mx_auto_dataset/autodataset.sh'
 IS_STAGING=False
-XDSME_COMMANDLINE={'mxprocessing-test': ['xdsme', '-i', 'LIB=/usr/local/lib/dectris-neggia.so', '-n', '50'],
-    'SR03ID01EPU01': ['vkube_xdsme.sh', 'xdsme', '--eiger', '--library', '/usr/local/lib/dectris-neggia.so', '-n', '40'],
+XDSME_COMMANDLINE={'mxprocessing-test': ['xdsme', '-n', '50'],
+    'SR03ID01EPU01': ['vkube_xdsme.sh', 'xdsme', '--eiger', '-n', '40'],
     'SR03BM01DAT01': ['xdsme', '--invert'],
-    'SR03ID01DAT02': ['xdsme', '--eiger', '--library', '/usr/local/lib/dectris-neggia.so', '-n', '4'], # 2.42 test computer, assume Eiger processing
-    'SR03ID01DAT01': ['vkube_xdsme.sh', 'xdsme', '--eiger', '--library', '/usr/local/lib/dectris-neggia.so', '-n', '40'],
+    'SR03ID01DAT02': ['xdsme', '--eiger', '-n', '4'], # 2.42 test computer, assume Eiger processing
+    'SR03ID01DAT01': ['vkube_xdsme.sh', 'xdsme', '--eiger', '-n', '40'],
     'default': ['xdsme'],
 
     }
