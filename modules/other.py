@@ -19,6 +19,20 @@ class Autorickshaw(Process):
 
         call(args, cwd=self.project_dir)
 
+class AutoStrategy(Process):
+#Not ideal yet as it gets info from the PVs on qeGUI intead of geting the data from
+#The collection object on mongoDB. Could create racing condition but good enough as a start. 
+    def __init__(self, run_name, *args, **kwargs):
+        super(AutoStrategy, self).__init__()
+        self.run_name = run_name
+
+    def process(self, **kwargs):
+        super(AutoStrategy, self).process(**kwargs)
+
+        args = ['python2.7', '/xray/software/Python/applications/qeguitools/get_strategy_populate_collect.py']
+
+        call(args, cwd=self.project_dir)
+
 class Resolution(object):
     def __init__(self):
         pass
