@@ -1,7 +1,7 @@
 from modules.setup import Setup, Retrigger
 from modules.xdsme import XDSme
 from modules.ccp4 import Pointless, Aimless, Truncate
-from modules.other import Autorickshaw, CornerResolution
+from modules.other import Autorickshaw, CornerResolution, AutoStrategy
 from modules.sadabs import Xds2sad, Sadabs, Xprep, XprepSummary
 from beamline import variables as blconfig
 from beamline import redis as BLredis
@@ -13,7 +13,8 @@ def default_pipeline(base):
     Pointless(base),
     Aimless(base),
     Truncate(base),
-    Autorickshaw(base)
+    Autorickshaw(base),
+    #AutoStrategy(base)
 ]
 
 base = 'hsymm'
@@ -29,7 +30,8 @@ def reprocess(base):
     Pointless(base),
     Aimless(base),
     Truncate(base),
-    Autorickshaw(base)
+    Autorickshaw(base),
+    #AutoStrategy(base)
 ]
 reprocess = reprocess(base)
 
@@ -42,7 +44,8 @@ def reprocess_ucsg(base='hsymmucsg'):
     Pointless(base),
     Aimless(base),
     Truncate(base),
-    Autorickshaw(base)
+    Autorickshaw(base),
+    #AutoStrategy(base)
 ]
 reprocess_ucsg = reprocess_ucsg()
 
@@ -54,7 +57,8 @@ def reprocess_from_start(base):
     Pointless(base),
     Aimless(base),
     Truncate(base),
-    Autorickshaw(base)
+    Autorickshaw(base),
+    #AutoStrategy(base)
 ]
 
 reprocess_from_start = reprocess_from_start(base)
