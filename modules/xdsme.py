@@ -215,7 +215,22 @@ class XDSme(Base):
                         epn=mxvars.EPN,
                         project=self.output.project)
             )
-            call([args[0], json.dumps(job_definition)])
+            process = Popen([args[0], json.dumps(job_definition)], stdout=PIPE, stderr=STDOUT, cwd=self.base_dir)
+            if '--strategy' in args or '-S' in args:
+                strategies_map = parse_strategies(process.stdout)
+                coll = Collection(self.dataset.collection_id.id)
+                anom_key = 'noanom'
+                if '-a' in args or '-A' in args:
+                    anom_key = 'anom'
+                strat_key = '%s:%s:strategies:%04d:%s:%s' % (coll.beamline, coll.EPN, int(coll.run_label), anom_key,              strategies_map['input'])
+                if mxvars.redis.get(strat_key):
+                     print 'warning, strategy key %s will be changed' % (strat_key)
+                ex = 60*60*24*30*3 # seconds in 3 months
+                mxvars.redis.set(strat_key, json.dumps(strategies_map['strategies']), ex=ex) # TODO this really should be         sample ID-based instead of run label
+            else:
+                # no strategies, so skipping searching for them
+                out, err = process.communicate()
+                print out, err
 
     def move_files(self, ):
         correct = os.path.join(self.project_dir, 'CORRECT.LP')
