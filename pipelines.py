@@ -77,7 +77,8 @@ if int (BLredis.get('SMX')) == 1:
         Pointless(base, nonchiral=True),
         Aimless(base),
         Truncate(base),
-        Autorickshaw(base)
+        Autorickshaw(base),
+        AutoStrategy(base)
     ]
     default = default_smx(base)
 
@@ -90,7 +91,8 @@ if int (BLredis.get('SMX')) == 1:
         Pointless(base, nonchiral=True),
         Aimless(base),
         Truncate(base),
-        Autorickshaw(base)
+        Autorickshaw(base),
+        AutoStrategy(base)
     ]
     reprocess = reprocess_smx(base)
 
@@ -105,7 +107,8 @@ if int (BLredis.get('SMX')) == 1:
         Aimless(base),
         Truncate(base),
         XDSme(base, '-3', '--strategy', '-i', delphi, '--skip_defpix', subtype='r'),
-        Autorickshaw(base)
+        Autorickshaw(base),
+        AutoStrategy(base)
     ]
     reprocess_ucsg = reprocess_ucsg_smx(base2)
 
@@ -117,7 +120,8 @@ if int (BLredis.get('SMX')) == 1:
         Pointless(base, nonchiral=True),
         Aimless(base),
         Truncate(base),
-        Autorickshaw(base)
+        Autorickshaw(base),
+        AutoStrategy(base)
     ]
     reprocess_from_start = reprocess_from_start_smx(base)
 
