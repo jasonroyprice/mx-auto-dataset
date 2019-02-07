@@ -6,6 +6,7 @@ from base import ReturnOptions
 import h5py
 import logging
 from beamline import variables as blconfig
+from beamline import oscillation
 
 class Autorickshaw(Process):
     def __init__(self, run_name, *args, **kwargs):
@@ -29,9 +30,16 @@ class AutoStrategy(Process):
     def process(self, **kwargs):
         super(AutoStrategy, self).process(**kwargs)
 
-        args = ['python2.7', '/xray/software/Python/applications/qeguitools/get_strategy_populate_collect.py']
+        try:
+            if oscillation.STRAT_RUN_AUTO == '1':
+                print 'using strategy to populate dataset'
+                args = ['python2.7', '/xray/software/Python/applications/qeguitools/get_strategy_populate_collect.py']
 
-        call(args, cwd=self.project_dir)
+                call(args, cwd=self.project_dir)
+            else:
+                print 'not pushing any strategy to dataset'
+        except AttributeError:
+            print 'No STRAT_RUN_AUTO PV available, skipping pushing of strategy'
 
 class Resolution(object):
     def __init__(self):

@@ -14,7 +14,7 @@ def default_pipeline(base):
     Aimless(base),
     Truncate(base),
     Autorickshaw(base),
-    #AutoStrategy(base)
+    AutoStrategy(base)
 ]
 
 base = 'hsymm'
@@ -31,7 +31,7 @@ def reprocess(base):
     Aimless(base),
     Truncate(base),
     Autorickshaw(base),
-    #AutoStrategy(base)
+    AutoStrategy(base)
 ]
 reprocess = reprocess(base)
 
@@ -45,7 +45,7 @@ def reprocess_ucsg(base='hsymmucsg'):
     Aimless(base),
     Truncate(base),
     Autorickshaw(base),
-    #AutoStrategy(base)
+    AutoStrategy(base)
 ]
 reprocess_ucsg = reprocess_ucsg()
 
@@ -58,7 +58,7 @@ def reprocess_from_start(base):
     Aimless(base),
     Truncate(base),
     Autorickshaw(base),
-    #AutoStrategy(base)
+    AutoStrategy(base)
 ]
 
 reprocess_from_start = reprocess_from_start(base)
