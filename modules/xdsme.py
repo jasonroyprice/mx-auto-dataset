@@ -1,5 +1,5 @@
 from .base import Base
-from subprocess import call, check_output, STDOUT, PIPE, Popen
+from subprocess import call, check_output, CalledProcessError, STDOUT, PIPE, Popen
 import os
 import shutil
 from beamline import redis as BLredis
@@ -206,31 +206,31 @@ class XDSme(Base):
                 out, err = process.communicate()
                 print out, err
         else:
-            job_definition = dict(
-                xds_command=args[1:], # arg[0] is the command to call
-                output_dir=self.base_dir,
-                beamline='MX2',
-                #beamline='MX2_VKUBE_test_STAGING', # optinally set beamline for configuration
-                labels=dict(
-                        epn=mxvars.EPN,
-                        project=self.output.project)
-            )
-            process = Popen([args[0], json.dumps(job_definition)], stdout=PIPE, stderr=STDOUT, cwd=self.base_dir)
-            if '--strategy' in args or '-S' in args:
-                strategies_map = parse_strategies(process.stdout)
-                coll = Collection(self.dataset.collection_id.id)
-                anom_key = 'noanom'
-                if '-a' in args or '-A' in args:
-                    anom_key = 'anom'
-                strat_key = '%s:%s:strategies:%04d:%s:%s' % (coll.beamline, coll.EPN, int(coll.run_label), anom_key,              strategies_map['input'])
-                if mxvars.redis.get(strat_key):
-                     print 'warning, strategy key %s will be changed' % (strat_key)
-                ex = 60*60*24*30*3 # seconds in 3 months
-                mxvars.redis.set(strat_key, json.dumps(strategies_map['strategies']), ex=ex) # TODO this really should be         sample ID-based instead of run label
-            else:
-                # no strategies, so skipping searching for them
-                out, err = process.communicate()
-                print out, err
+            labels=dict(
+                  epn=mxvars.EPN,
+                  project=self.output.project,
+                  xds="master")
+
+            try:
+                jib_request = dict(labels=labels, working_dir=self.base_dir, hostname=hostname.lower())
+                process = Popen(args, stdout=PIPE, stderr=STDOUT, env={"JIB_REQUEST":json.dumps(jib_request)}, cwd=self.base_dir)
+                if '--strategy' in args or '-S' in args:
+                    strategies_map = parse_strategies(process.stdout)
+                    coll = Collection(self.dataset.collection_id.id)
+                    anom_key = 'noanom'
+                    if '-a' in args or '-A' in args:
+                        anom_key = 'anom'
+                    strat_key = '%s:%s:strategies:%04d:%s:%s' % (coll.beamline, coll.EPN, int(coll.run_label), anom_key,              strategies_map['input'])
+                    if mxvars.redis.get(strat_key):
+                         print 'warning, strategy key %s will be changed' % (strat_key)
+                    ex = 60*60*24*30*3 # seconds in 3 months
+                    mxvars.redis.set(strat_key, json.dumps(strategies_map['strategies']), ex=ex) # TODO this really should be         sample ID-based instead of run label
+                else:
+                    # no strategies, so skipping searching for them
+                    out, err = process.communicate()
+                    print out, err
+            except CalledProcessError as e:
+                print 'call error output and returncode', e.output, e.returncode
 
     def move_files(self, ):
         correct = os.path.join(self.project_dir, 'CORRECT.LP')
