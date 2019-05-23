@@ -1,5 +1,5 @@
 from .base import Base
-from subprocess import call, check_output
+from subprocess import call, check_output, CalledProcessError, STDOUT
 import os
 import shutil
 from beamline import redis as BLredis
@@ -124,6 +124,11 @@ class XDSme(Base):
         if args[0] in ['xdsme', 'nice']:
             call(args, cwd=self.base_dir)
         else:
+            labels=dict(
+                  epn=mxvars.EPN,
+                  project=self.output.project,
+                  xds="master")
+
             job_definition = dict(
                 xds_command=args[1:], # arg[0] is the command to call
                 output_dir=self.base_dir,
@@ -133,7 +138,11 @@ class XDSme(Base):
                         epn=mxvars.EPN,
                         project=self.output.project)
             )
-            call([args[0], json.dumps(job_definition)])
+            try:
+                jib_request = dict(labels=labels, working_dir=self.base_dir, hostname=hostname.lower())
+                call(args, stderr=STDOUT, env={"JIB_REQUEST":json.dumps(jib_request)})
+            except CalledProcessError as e:
+                print 'call error output and returncode', e.output, e.returncode
 
     def move_files(self, ):
         correct = os.path.join(self.project_dir, 'CORRECT.LP')

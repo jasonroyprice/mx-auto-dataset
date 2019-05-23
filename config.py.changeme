@@ -5,8 +5,8 @@ PIPELINE_NAME="PRODUCTION"
 PIPELINE_PATH='/xray/software/Python/libraries/mx_auto_dataset/autodataset.sh'
 IS_STAGING=False
 XDSME_COMMANDLINE={'mxprocessing-test': ['xdsme', '-n', '50'],
-    'SR03ID01EPU01': ['vkube_xdsme.sh', 'xdsme', '--jobs', '6', '--processors', '16', '--force_processors_jobs', '--eiger'],
-    'SR03ID01DAT01': ['xdsme', '--eiger', '-n', '32'], # multiple workers should be handled by changing workers.ini
+    'SR03ID01EPU01': ['/home/user3id1/.venv_jib/bin/jib', '-p', '/home/user3id1/production.yaml', '--no-rm-failed', '--', 'xdsme', '--jobs', '6', '--processors', '16', '--force_processors_jobs', '--eiger'],
+        'SR03ID01DAT01': ['xdsme', '--eiger', '-n', '32'], # multiple workers should be handled by changing workers.ini
     'SR03BM01DAT01': ['xdsme', '--invert'],
     'SR03ID01DAT02': ['xdsme', '--eiger', '-n', '4'], # 2.42 test computer, assume Eiger processing
     'SR03ID01DAT01': ['vkube_xdsme.sh', 'xdsme', '--jobs', '6', '--processors', '16', '--force_processors_jobs', '--eiger'],
