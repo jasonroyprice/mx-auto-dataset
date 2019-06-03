@@ -31,7 +31,7 @@ class AutoStrategy(Process):
         super(AutoStrategy, self).process(**kwargs)
 
         try:
-            if abs(float(oscillation.STRAT_RUN_AUTO) - 1.0) << 0.01:
+            if abs(float(oscillation.STRAT_RUN_AUTO) - 1.0) < 0.01:
                 print 'using strategy to populate dataset'
                 args = ['python2.7', '/xray/software/Python/applications/qeguitools/get_strategy_populate_collect.py']
 
