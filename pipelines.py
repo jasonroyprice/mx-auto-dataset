@@ -3,6 +3,7 @@ from modules.xdsme import XDSme
 from modules.ccp4 import Pointless, Aimless, Truncate, AimlessPlot, AimlessScalePlot
 from modules.other import Autorickshaw, CornerResolution, LinkCorrect
 from modules.sadabs import Xds2sad, Sadabs, Xprep, XprepSummary
+from modules.CX_xprep_graphs import XprepGraphs
 from modules.cif import Cif
 from beamline import variables as blconfig
 def default_pipeline(base):
@@ -84,6 +85,9 @@ if int (BLredis.get('SMX')) == 1:
     xp_summary = XprepSummary()
     default.append(xp_summary)
 
+    xp_graphs = XprepGraphs(base)
+    default.append(xp_graphs)
+
     p1_noscale_reprocess = XDSme(p1n, p1n, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True, subtype= 'r')
     hsymm_noscale_reprocess = XDSme(hsn, hsn, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', subtype='r')
     reprocess.insert(1, CornerResolution(base))
@@ -93,6 +97,7 @@ if int (BLredis.get('SMX')) == 1:
     reprocess += sadabs_steps
     reprocess += xprep_steps
     reprocess.append(xp_summary)
+    reprocess.append(xp_graphs)
 
     p1_noscale_ucsg = XDSme(p1n, p1n, '-3', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True, subtype= 'r')
     hsymm_noscale_ucsg = XDSme(hsn, hsn, '-3', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', subtype='r')
@@ -103,6 +108,7 @@ if int (BLredis.get('SMX')) == 1:
     reprocess_ucsg += sadabs_steps
     reprocess_ucsg += xprep_steps
     reprocess_ucsg.append(xp_summary)
+    reprocess_ucsg.append(xp_graphs)
 
     from_start_delphi_reprocess = XDSme(base, base, '-a', '-i', delphi, subtype='r')
     reprocess_from_start.insert(1, CornerResolution(base))
@@ -113,5 +119,6 @@ if int (BLredis.get('SMX')) == 1:
     reprocess_from_start += sadabs_steps
     reprocess_from_start += xprep_steps
     reprocess_from_start.append(xp_summary)
+    reprocess_from_start.append(xp_graphs)
 
 pipelines = dict(filter(lambda x: isinstance(x[1], list), locals().items()))

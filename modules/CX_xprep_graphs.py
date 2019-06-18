@@ -15,12 +15,12 @@ import re
 import sys
 import pandas as pd
 import numpy as np
+from .base import Base
 
-
-def xprep_graphs(filename):
+def xprep_graphs(project_dir,filename):
 
     # Open the file and read into a string
-    with open(filename, 'rt') as myfile:
+    with open(os.path.join(project_dir,filename), 'rt') as myfile:
         contents = myfile.read()
 
     # Search file for beginning and ending of stats table
@@ -84,5 +84,14 @@ def xprep_graphs(filename):
     plt.subplots_adjust(bottom=0.1,right=2,top=2)
 
     # Save the .png graph file into the current directory
-    plt.savefig(os.path.join(os.getcwd(),filename.split(".")[0]+'.png'),bbox_inches='tight',pad_inches=0.1)
+    plt.savefig(os.path.join(project_dir,filename.split(".")[0]+'.png'),bbox_inches='tight',pad_inches=0.1)
 
+class XprepGraphs(Base):
+
+    def __init__(self, run_name, *args, **kwargs):
+        super(XprepGraphs, self).__init__()
+        self.run_name = run_name
+
+    def process(self, **kwargs):
+        xprep_graphs(self.project_dir,'XDS_ASCII_p1.prp')
+        
