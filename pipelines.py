@@ -1,8 +1,7 @@
 from modules.setup import Setup, Retrigger
 from modules.xdsme import XDSme
 from modules.ccp4 import Pointless, Aimless, Truncate
-from modules.other import Autorickshaw, CornerResolution, AutoStrategy
-from modules.other import Autorickshaw, CornerResolution, RunSpreadsheetCalculator
+from modules.other import Autorickshaw, CornerResolution, AutoStrategy, CountOverloads, RunSpreadsheetCalculator
 from modules.sadabs import Xds2sad, Sadabs, Xprep, XprepSummary
 from beamline import variables as blconfig
 from beamline import redis as BLredis
@@ -13,6 +12,7 @@ def default_pipeline(base):
     XDSme(base, '-a', '--strategy', '--highest-symm-strategy', '--skip_defpix', subtype='p'),
     Pointless(base),
     Aimless(base),
+    CountOverloads(base),
     Truncate(base),
     Autorickshaw(base),
     AutoStrategy(base),
@@ -31,6 +31,7 @@ def reprocess(base):
     XDSme(base, '-3', '-a', '--strategy', '--highest-symm-strategy', '--skip_defpix', subtype = 'r'),
     Pointless(base),
     Aimless(base),
+    CountOverloads(base),
     Truncate(base),
     Autorickshaw(base),
     AutoStrategy(base),
@@ -46,6 +47,7 @@ def reprocess_ucsg(base='hsymmucsg'):
     XDSme(base, '-3', '--strategy', '-a', '--skip_defpix', subtype = 'r'),
     Pointless(base),
     Aimless(base),
+    CountOverloads(base),
     Truncate(base),
     Autorickshaw(base),
     AutoStrategy(base),
@@ -60,6 +62,7 @@ def reprocess_from_start(base):
     XDSme(base, '-a', '--strategy', '--highest-symm-strategy', '--skip_defpix', subtype = 'r'),
     Pointless(base),
     Aimless(base),
+    CountOverloads(base),
     Truncate(base),
     Autorickshaw(base),
     AutoStrategy(base),
@@ -81,6 +84,7 @@ if int (BLredis.get('SMX')) == 1:
         XDSme(base, '-a', '--strategy', '--highest-symm-strategy', '-i', delphi, '--skip_defpix', subtype = 'p'),
         Pointless(base, nonchiral=True),
         Aimless(base),
+        CountOverloads(base),
         Truncate(base),
         Autorickshaw(base),
         AutoStrategy(base),
@@ -96,6 +100,7 @@ if int (BLredis.get('SMX')) == 1:
         XDSme(base, '-a', '--strategy', '--highest-symm-strategy', '-i', delphi, '--skip_defpix', subtype='r'),
         Pointless(base, nonchiral=True),
         Aimless(base),
+        CountOverloads(base),
         Truncate(base),
         Autorickshaw(base),
         AutoStrategy(base),
@@ -112,6 +117,7 @@ if int (BLredis.get('SMX')) == 1:
         XDSme(base, '-a', '--strategy', '-i', delphi, '--skip_defpix', subtype='r'),
         Pointless(base, nonchiral=True),
         Aimless(base),
+        CountOverloads(base),
         Truncate(base),
         XDSme(base, '-3', '--strategy', '-i', delphi, '--skip_defpix', subtype='r'),
         Autorickshaw(base),
@@ -127,6 +133,7 @@ if int (BLredis.get('SMX')) == 1:
         XDSme(base, '-a', '--strategy', '--highest-symm-strategy', '-i', delphi, '--skip_defpix', subtype='r'),
         Pointless(base, nonchiral=True),
         Aimless(base),
+        CountOverloads(base),
         Truncate(base),
         Autorickshaw(base),
         AutoStrategy(base),
