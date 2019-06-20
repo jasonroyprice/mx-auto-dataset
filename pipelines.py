@@ -1,7 +1,7 @@
 from modules.setup import Setup, Retrigger
 from modules.xdsme import XDSme
 from modules.ccp4 import Pointless, Aimless, Truncate, AimlessPlot, AimlessScalePlot
-from modules.other import Autorickshaw, CornerResolution, LinkCorrect
+from modules.other import Autorickshaw, CornerResolution, LinkCorrect, CountOverloads
 from modules.sadabs import Xds2sad, Sadabs, Xprep, XprepSummary
 from modules.CX_xprep_graphs import XprepGraphs
 from modules.cif import Cif
@@ -19,6 +19,7 @@ def default_pipeline(base):
     Aimless(base),
     AimlessPlot(base),
     AimlessScalePlot(base),
+    CountOverloads(base),
     XDSme('p1', 'p1', '-5', '-a', p1=True),
     XDSme(base+'_NOANOM', base+'_NOANOM', '-5'),
     Truncate(base),

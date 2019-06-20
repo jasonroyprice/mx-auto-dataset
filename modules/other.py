@@ -8,6 +8,8 @@ import logging
 from beamline import variables as blconfig
 from beamline import redis as BLredis
 import os
+from .base import Base
+from count_integration_overloads import calculate_overloaded_actual
 
 class Autorickshaw(Process):
     def __init__(self, run_name, *args, **kwargs):
@@ -125,3 +127,12 @@ class LinkCorrect(Process):
             os.symlink(src, dst)
         except:
             print "warning, %s to %s symlink could not be made" % (src, dst)
+
+class CountOverloads(Base):
+    def __init__(self, run_name, **kwargs):
+        self.run_name = run_name
+
+    def process(self, **kwargs):
+        integrate_counts = calculate_overloaded_actual(os.path.join(self.project_dir, 'INTEGRATE.LP'))
+        self.dataset.__dict__.update(overloads=integrate_counts['total_overloaded'])
+
