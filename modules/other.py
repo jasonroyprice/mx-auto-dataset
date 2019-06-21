@@ -136,3 +136,8 @@ class CountOverloads(Base):
         integrate_counts = calculate_overloaded_actual(os.path.join(self.project_dir, 'INTEGRATE.LP'))
         self.dataset.__dict__.update(overloads=integrate_counts['total_overloaded'])
 
+class RunSpreadsheetCalculator(Base):
+    def __init__(self, run_name, **kwargs):
+        self.run_name = run_name
+    def process(self, **kwargs):
+        call(['python2.7', '/xray/software/Python/applications/end_of_visit_tools/run_spreadsheet_calculator.py'])
