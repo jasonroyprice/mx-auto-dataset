@@ -128,3 +128,9 @@ class CornerResolution(ReturnOptions):
         else:
             print "keeping previously set resolution", kwargs.get('high_resolution')
         return kwargs
+
+class RunSpreadsheetCalculator(Base):
+    def __init__(self, run_name, **kwargs):
+        self.run_name = run_name
+    def process(self, **kwargs):
+        call(['python2.7', '/xray/software/Python/applications/end_of_visit_tools/run_spreadsheet_calculator.py'])

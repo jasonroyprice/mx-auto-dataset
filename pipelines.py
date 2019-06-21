@@ -2,6 +2,7 @@ from modules.setup import Setup, Retrigger
 from modules.xdsme import XDSme
 from modules.ccp4 import Pointless, Aimless, Truncate
 from modules.other import Autorickshaw, CornerResolution, AutoStrategy
+from modules.other import Autorickshaw, CornerResolution, RunSpreadsheetCalculator
 from modules.sadabs import Xds2sad, Sadabs, Xprep, XprepSummary
 from beamline import variables as blconfig
 from beamline import redis as BLredis
@@ -14,7 +15,8 @@ def default_pipeline(base):
     Aimless(base),
     Truncate(base),
     Autorickshaw(base),
-    AutoStrategy(base)
+    AutoStrategy(base),
+    RunSpreadsheetCalculator(base)
 ]
 
 base = 'hsymm'
@@ -31,7 +33,8 @@ def reprocess(base):
     Aimless(base),
     Truncate(base),
     Autorickshaw(base),
-    AutoStrategy(base)
+    AutoStrategy(base),
+    RunSpreadsheetCalculator(base)
 ]
 reprocess = reprocess(base)
 
@@ -45,7 +48,8 @@ def reprocess_ucsg(base='hsymmucsg'):
     Aimless(base),
     Truncate(base),
     Autorickshaw(base),
-    AutoStrategy(base)
+    AutoStrategy(base),
+    RunSpreadsheetCalculator(base)
 ]
 reprocess_ucsg = reprocess_ucsg()
 
@@ -58,7 +62,8 @@ def reprocess_from_start(base):
     Aimless(base),
     Truncate(base),
     Autorickshaw(base),
-    AutoStrategy(base)
+    AutoStrategy(base),
+    RunSpreadsheetCalculator(base)
 ]
 
 reprocess_from_start = reprocess_from_start(base)
@@ -78,7 +83,8 @@ if int (BLredis.get('SMX')) == 1:
         Aimless(base),
         Truncate(base),
         Autorickshaw(base),
-        AutoStrategy(base)
+        AutoStrategy(base),
+        RunSpreadsheetCalculator(base)
     ]
     default = default_smx(base)
 
@@ -92,7 +98,8 @@ if int (BLredis.get('SMX')) == 1:
         Aimless(base),
         Truncate(base),
         Autorickshaw(base),
-        AutoStrategy(base)
+        AutoStrategy(base),
+        RunSpreadsheetCalculator(base)
     ]
     reprocess = reprocess_smx(base)
 
@@ -108,7 +115,8 @@ if int (BLredis.get('SMX')) == 1:
         Truncate(base),
         XDSme(base, '-3', '--strategy', '-i', delphi, '--skip_defpix', subtype='r'),
         Autorickshaw(base),
-        AutoStrategy(base)
+        AutoStrategy(base),
+        RunSpreadsheetCalculator(base)
     ]
     reprocess_ucsg = reprocess_ucsg_smx(base2)
 
@@ -121,7 +129,8 @@ if int (BLredis.get('SMX')) == 1:
         Aimless(base),
         Truncate(base),
         Autorickshaw(base),
-        AutoStrategy(base)
+        AutoStrategy(base),
+        RunSpreadsheetCalculator(base)
     ]
     reprocess_from_start = reprocess_from_start_smx(base)
 
