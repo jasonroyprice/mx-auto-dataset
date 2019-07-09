@@ -7,6 +7,7 @@ import h5py
 import logging
 from beamline import variables as blconfig
 from beamline import oscillation
+from .base import Base
 
 class Autorickshaw(Process):
     def __init__(self, run_name, *args, **kwargs):
