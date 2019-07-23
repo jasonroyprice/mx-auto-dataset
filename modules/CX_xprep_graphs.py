@@ -17,7 +17,10 @@ import pandas as pd
 import numpy as np
 from .base import Base
 
-def xprep_graphs(project_dir,filename):
+import tempfile
+from beamline import redis
+
+def xprep_graphs(project_dir,filename, write_to_redis, redis_key):
 
     # Open the file and read into a string
     with open(os.path.join(project_dir,filename), 'rt') as myfile:
@@ -44,6 +47,9 @@ def xprep_graphs(project_dir,filename):
                                         '#Data','#Theory','%Complete', 'Redundancy',
                                         'Mean I','Mean I/s','R(int)','Rsigma'],dtype=float)
         df.drop(df.tail(5).index,inplace=True)
+
+        if write_to_redis and not redis_key:
+            raise TypeError('if writing to redis, redis_key must be defined')
 
         x = df['Resolution High']
 
@@ -90,6 +96,20 @@ def xprep_graphs(project_dir,filename):
         # Save the .png graph file into the current directory
         plt.savefig(os.path.join(project_dir,filename.split(".")[0]+'.png'),bbox_inches='tight',pad_inches=0.1)
 
+        # Write plots to redis
+        if write_to_redis and redis_key:
+            try:
+                tmpdirectory = tempfile.mkdtemp()
+                tmpfilename = 'xprep.png'
+                tmppath = os.path.join(tmpdirectory, tmpfilename)
+                plt.savefig(tmppath, format='png')
+                with open(tmppath,'r') as tmpfile:
+                    ex = 60*60*24*30*3 # seconds in 3 months
+                    redis.set(redis_key, tmpfile.read(),ex=ex)
+            finally:
+                os.remove(tmppath)
+                os.rmdir(tmpdirectory)
+
 class XprepGraphs(Base):
 
     def __init__(self, run_name, *args, **kwargs):
@@ -97,5 +117,11 @@ class XprepGraphs(Base):
         self.run_name = run_name
 
     def process(self, **kwargs):
-        xprep_graphs(self.project_dir,'XDS_ASCII_p1.prp')
+        keyname = '%s:%s:%s:xprep_graphs' % (self.dataset.beamline, self.dataset.epn, self.project_dir.replace('/','_'))
+        try:
+            xprep_graphs(self.project_dir,'XDS_ASCII_p1.prp', write_to_redis=True, redis_key=keyname)
+            self.dataset.__dict__.update(xprep_graphs=keyname)
+            self.dataset.save()
+        except:
+            print('exception during xprep plot generation: type: %s value: %s traceback: %s' % sys.exc_info())
         
