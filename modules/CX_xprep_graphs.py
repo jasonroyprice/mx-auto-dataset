@@ -102,7 +102,7 @@ def xprep_graphs(project_dir,filename, write_to_redis, redis_key):
                 tmpdirectory = tempfile.mkdtemp()
                 tmpfilename = 'xprep.png'
                 tmppath = os.path.join(tmpdirectory, tmpfilename)
-                plt.savefig(tmppath, format='png')
+                plt.savefig(tmppath, format='png',bbox_inches='tight',pad_inches=0.1)
                 with open(tmppath,'r') as tmpfile:
                     ex = 60*60*24*30*3 # seconds in 3 months
                     redis.set(redis_key, tmpfile.read(),ex=ex)
