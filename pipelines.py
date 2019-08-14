@@ -6,12 +6,11 @@ from modules.sadabs import Xds2sad, Sadabs, Xprep, XprepSummary
 from modules.CX_xprep_graphs import XprepGraphs
 from modules.cif import Cif
 from beamline import variables as blconfig
+
+base = 'hsymm'
+po = Pointless(base)
+
 def default_pipeline(base):
-    from beamline import redis as BLredis
-    if int(BLredis.get('SMX')) == 1:
-        po = Pointless(base, nonchiral=True)
-    else:
-        po = Pointless(base)
     return [
     Setup(suffix='process', detector=blconfig.detector_type),
     XDSme(base, base, '-a', subtype = 'p'),
@@ -28,46 +27,92 @@ def default_pipeline(base):
     RunSpreadsheetCalculator(base)
 ]
 
-base = 'hsymm'
 default = default_pipeline(base)
 # reprocess pipeline (copy of default)
 # chanege xdsme hsymm to only do CORRECT
 # add retrigger step to copy data from other processing
-reprocess = list(default)
-reprocess[0] = Setup(suffix='retrigger', detector=blconfig.detector_type)
-reprocess[1] = XDSme(base, base, '-5', '-a', subtype = 'r')
-reprocess.insert(1, Retrigger())
+reprocess = [
+    Setup(suffix='retrigger', detector=blconfig.detector_type),
+    Retrigger(),
+    XDSme(base, base, '-5', '-a', subtype = 'r'),
+    po,
+    Aimless(base),
+    AimlessPlot(base),
+    AimlessScalePlot(base),
+    CountOverloads(base),
+    XDSme('p1', 'p1', '-5', '-a', p1=True),
+    XDSme(base+'_NOANOM', base+'_NOANOM', '-5'),
+    Truncate(base),
+    LinkCorrect(base),
+    Autorickshaw(base),
+    RunSpreadsheetCalculator(base)
+]
 
 # to use unit cell and spacegroup
-reprocess_ucsg = default_pipeline(base)
-reprocess_ucsg[0] = Setup(suffix = 'retrigger', detector=blconfig.detector_type)
-reprocess_ucsg[1] = XDSme(base, 'hsymmucsg', '-3', '-a', subtype = 'r')
-reprocess_ucsg.insert(1, Retrigger(3))
+reprocess_ucsg = [
+    Setup(suffix='retrigger', detector=blconfig.detector_type),
+    Retrigger(3),
+    XDSme(base, 'hsymmucsg', '-3', '-a', subtype = 'r'),
+    po,
+    Aimless(base),
+    AimlessPlot(base),
+    AimlessScalePlot(base),
+    CountOverloads(base),
+    XDSme('p1', 'p1', '-5', '-a', p1=True),
+    XDSme(base+'_NOANOM', base+'_NOANOM', '-5'),
+    Truncate(base),
+    LinkCorrect(base),
+    Autorickshaw(base),
+    RunSpreadsheetCalculator(base)
+]
 
 # for weak, brute, slow, ice options, go from the beginning
-reprocess_from_start = list(default)
-reprocess_from_start[0] = Setup(suffix = 'retrigger', detector=blconfig.detector_type)
-reprocess_from_start[1] = XDSme(base, base, '-a', subtype = 'r')
+reprocess_from_start = [
+    Setup(suffix='retrigger', detector=blconfig.detector_type),
+    XDSme(base, base, '-a', subtype = 'r'),
+    po,
+    Aimless(base),
+    AimlessPlot(base),
+    AimlessScalePlot(base),
+    CountOverloads(base),
+    XDSme('p1', 'p1', '-5', '-a', p1=True),
+    XDSme(base+'_NOANOM', base+'_NOANOM', '-5'),
+    Truncate(base),
+    LinkCorrect(base),
+    Autorickshaw(base),
+    RunSpreadsheetCalculator(base)
+]
 
 from beamline import redis as BLredis
 if int (BLredis.get('SMX')) == 1:
-    default.insert(1, CornerResolution(base))
-
-    if blconfig.detector_type == 'eiger':
+    if blconfig.detector_type == 'eiger': #TODO get this information from collection object
         delphi = 'DELPHI=15'
     else:
         delphi = 'DELPHI=45'
-    from_start_delphi = XDSme(base, base, '-a', '-i', delphi, subtype='p')
-    default[2] = from_start_delphi
 
     p1n = 'p1_noscale'
     hsn = 'hsymm_noscale'
 
-    p1_noscale = XDSme(p1n, p1n, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True)
-    hsymm_noscale = XDSme(hsn, hsn, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0')
-    del default[9:10]
-    default.insert(7, hsymm_noscale)
-    default.insert(7, p1_noscale)
+    po = Pointless(base, nonchiral=True)
+
+    default = [
+        Setup(suffix='process', detector=blconfig.detector_type),
+        CornerResolution(base),
+        XDSme(base, base, '-a', '-i', delphi, subtype = 'p'),
+        po,
+        Aimless(base),
+        AimlessPlot(base),
+        AimlessScalePlot(base),
+        CountOverloads(base),
+        XDSme(p1n, p1n, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True),
+        XDSme(hsn, hsn, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0'),
+        XDSme('p1', 'p1', '-5', '-a', p1=True),
+        Truncate(base),
+        LinkCorrect(base),
+        Autorickshaw(base),
+        RunSpreadsheetCalculator(base)
+    ]
+
     c = Cif(base)
     x = Xds2sad('xds2sad', filename='XDS_ASCII.HKL_p1_noscale')
     w = Sadabs('Sadabs-w', absorber_strength = 'weak')
@@ -90,34 +135,69 @@ if int (BLredis.get('SMX')) == 1:
     xp_graphs = XprepGraphs(base)
     default.append(xp_graphs)
 
-    p1_noscale_reprocess = XDSme(p1n, p1n, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True, subtype= 'r')
-    hsymm_noscale_reprocess = XDSme(hsn, hsn, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', subtype='r')
-    reprocess.insert(1, CornerResolution(base))
-    del reprocess[10:11]
-    reprocess.insert(4, hsymm_noscale_reprocess)
-    reprocess.insert(4, p1_noscale_reprocess)
+    reprocess = [
+        Setup(suffix='process', detector=blconfig.detector_type),
+        CornerResolution(base),
+        Retrigger(),
+        XDSme(base, base, '-5', '-a', '-i', delphi, subtype = 'r'),
+        po,
+        Aimless(base),
+        AimlessPlot(base),
+        AimlessScalePlot(base),
+        CountOverloads(base),
+        XDSme(p1n, p1n, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True, subtype='r'),
+        XDSme(hsn, hsn, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', subtype='r'),
+        XDSme('p1', 'p1', '-5', '-a', p1=True),
+        Truncate(base),
+        LinkCorrect(base),
+        Autorickshaw(base),
+        RunSpreadsheetCalculator(base)
+    ]
     reprocess += sadabs_steps
     reprocess += xprep_steps
     reprocess.append(xp_summary)
     reprocess.append(xp_graphs)
 
-    p1_noscale_ucsg = XDSme(p1n, p1n, '-3', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True, subtype= 'r')
-    hsymm_noscale_ucsg = XDSme(hsn, hsn, '-3', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', subtype='r')
-    reprocess_ucsg.insert(1, CornerResolution(base))
-    del reprocess_ucsg[10:11]
-    reprocess_ucsg.insert(4, hsymm_noscale_ucsg)
-    reprocess_ucsg.insert(4, p1_noscale_ucsg)
+    reprocess_ucsg = [
+        Setup(suffix='process', detector=blconfig.detector_type),
+        CornerResolution(base),
+        Retrigger(3),
+        XDSme(base, 'hsymmucsg', '-3', '-a', '-i', delphi, subtype = 'r'),
+        po,
+        Aimless(base),
+        AimlessPlot(base),
+        AimlessScalePlot(base),
+        CountOverloads(base),
+        XDSme(p1n, p1n, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True, subtype='r'),
+        XDSme(hsn, hsn, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', subtype='r'),
+        XDSme('p1', 'p1', '-5', '-a', p1=True),
+        Truncate(base),
+        LinkCorrect(base),
+        Autorickshaw(base),
+        RunSpreadsheetCalculator(base)
+    ]
     reprocess_ucsg += sadabs_steps
     reprocess_ucsg += xprep_steps
     reprocess_ucsg.append(xp_summary)
     reprocess_ucsg.append(xp_graphs)
 
-    from_start_delphi_reprocess = XDSme(base, base, '-a', '-i', delphi, subtype='r')
-    reprocess_from_start.insert(1, CornerResolution(base))
-    del reprocess_from_start[9:10]
-    reprocess_from_start[2] = from_start_delphi_reprocess
-    reprocess_from_start.insert(7, p1_noscale_reprocess)
-    reprocess_from_start.insert(8, hsymm_noscale_reprocess)
+    reprocess_from_start = [
+        Setup(suffix='process', detector=blconfig.detector_type),
+        CornerResolution(base),
+        XDSme(base, base, '-a', '-i', delphi, subtype = 'r'),
+        po,
+        Aimless(base),
+        AimlessPlot(base),
+        AimlessScalePlot(base),
+        CountOverloads(base),
+        XDSme(p1n, p1n, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', p1=True, subtype='r'),
+        XDSme(hsn, hsn, '-5', '-a', '-i', 'NBATCH=1 MINIMUM_I_SIGMA=50 CORRECTIONS=0', subtype='r'),
+        XDSme('p1', 'p1', '-5', '-a', p1=True),
+        Truncate(base),
+        LinkCorrect(base),
+        Autorickshaw(base),
+        RunSpreadsheetCalculator(base)
+    ]
     reprocess_from_start += sadabs_steps
     reprocess_from_start += xprep_steps
     reprocess_from_start.append(xp_summary)
