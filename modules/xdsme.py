@@ -128,16 +128,6 @@ class XDSme(Base):
                   epn=mxvars.EPN,
                   project=self.output.project,
                   xds="master")
-
-            job_definition = dict(
-                xds_command=args[1:], # arg[0] is the command to call
-                output_dir=self.base_dir,
-                beamline='MX2',
-                #beamline='MX2_VKUBE_test_STAGING', # optinally set beamline for configuration
-                labels=dict(
-                        epn=mxvars.EPN,
-                        project=self.output.project)
-            )
             try:
                 jib_request = dict(labels=labels, working_dir=self.base_dir, hostname=hostname.lower())
                 call(args, stderr=STDOUT, env={"JIB_REQUEST":json.dumps(jib_request)})
