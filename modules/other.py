@@ -143,6 +143,10 @@ class CountOverloads(Base):
         self.run_name = run_name
 
     def process(self, **kwargs):
-        integrate_counts = calculate_overloaded_actual(os.path.join(self.project_dir, 'INTEGRATE.LP'))
-        self.dataset.__dict__.update(overloads=integrate_counts['total_overloaded'])
+        filename = 'INTEGRATE.LP'
+        try:
+            integrate_counts = calculate_overloaded_actual(os.path.join(self.project_dir, filename))
+            self.dataset.__dict__.update(overloads=integrate_counts['total_overloaded'])
+        except IOError:
+            print('IOError, probably due to missing %s. Skipping' % filename)
 
