@@ -11,6 +11,7 @@ import os
 import sys
 from .base import Base
 from count_integration_overloads import calculate_overloaded_actual
+from processing.models import Collection
 
 class Autorickshaw(Process):
     def __init__(self, run_name, *args, **kwargs):
@@ -139,7 +140,8 @@ class RunSpreadsheetCalculator(Base):
     def process(self, **kwargs):
         sys.path.append('/xray/software/Python/applications/end_of_visit_tools')
         from create_spreadsheet import run_spreadsheet_calculator
-        run_spreadsheet_calculator(epn=blconfig.EPN)
+        coll = Collection(self.dataset.collection_id.id)
+        run_spreadsheet_calculator(epn=coll.EPN)
 
 class CountOverloads(Base):
     def __init__(self, run_name, **kwargs):
