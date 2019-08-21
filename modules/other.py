@@ -8,6 +8,7 @@ import logging
 from beamline import variables as blconfig
 from beamline import redis as BLredis
 import os
+import sys
 from .base import Base
 from count_integration_overloads import calculate_overloaded_actual
 
@@ -144,4 +145,6 @@ class RunSpreadsheetCalculator(Base):
     def __init__(self, run_name, **kwargs):
         self.run_name = run_name
     def process(self, **kwargs):
-        call(['python2.7', '/xray/software/Python/applications/end_of_visit_tools/run_spreadsheet_calculator.py'])
+        sys.path.append('/xray/software/Python/applications/end_of_visit_tools')
+        from create_spreadsheet import run_spreadsheet_calculator
+        run_spreadsheet_calculator(epn=blconfig.EPN)
