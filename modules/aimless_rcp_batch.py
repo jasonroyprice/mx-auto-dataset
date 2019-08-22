@@ -1,17 +1,17 @@
 import sys
 import os
 
-#below assumes that ccp4 is set up
-smartie_path = '%s/share/smartie' % os.environ['CCP4']
-sys.path.append(smartie_path)
-
 import click
-import smartie
 import matplotlib
 matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 import tempfile
 from beamline import redis
+
+#below assumes that ccp4 is set up in standard /xray/progs location
+smartie_path = '%s/share/smartie' % '/xray/progs/CCP4/ccp4-7.0/ccp4-7.0/'
+sys.path.append(smartie_path)
+import smartie
 
 def extract_rcp_batch(directory, filename):
     logfile = smartie.parselog('%s/%s' % (directory, filename))
