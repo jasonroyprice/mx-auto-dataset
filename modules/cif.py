@@ -19,7 +19,9 @@ def write_template_file(project_dir, beamline, detector, energy_in_kev, cryojet_
     else:
         raise Exception('Unknown beamline')
 
-    if detector == 'eiger':
+    if detector == 'eiger' and beamline == 'MX1':
+        detector_text = 'Dectris Eiger2 9M'
+    elif detector == 'eiger' and beamline == 'MX2':
         detector_text = 'Dectris Eiger 16M'
     elif detector == 'adsc':
         detector_text = 'ADSC Quantum 210r'
