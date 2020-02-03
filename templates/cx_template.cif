@@ -2,10 +2,23 @@ _audit_creation_method            SHELXL-97
 
 _exptl_crystal_density_method     'not measured'
 
+{% if temperature and temperature != None %}
+_cell_measurement_temperature     'temp_from_device'
+{% endif %}
+_cell_measurement_reflns_used     'can be found in IDXREF.LP'
+_cell_measurement_theta_min       'Value not reported by XDS'
+_cell_measurement_theta_max        'Value not reported by XDS'
+
+_exptl_crystal_description        'user input'
+_exptl_crystal_colour             'user input'
+_exptl_crystal_size_max           'user input'
+_exptl_crystal_size_mid           'user input'
+_exptl_crystal_size_min           'user input'
+
 _exptl_absorpt_correction_type    'Multi-Scan'
-_exptl_absorpt_correction_T_min ? (not reported by XDS)
-_exptl_absorpt_correction_T_max ? (not reported by XDS)
-_exptl_absorpt_process_details    XDS (Kabsch, 1993)
+_exptl_absorpt_correction_T_min   'Value not reported by XDS' or 'can be found in sad.abs'
+_exptl_absorpt_correction_T_max   'Value not reported by XDS" or 'can be found in sad.abs'
+_exptl_absorpt_process_details    'XDS (Kabsch, 1993)' or 'sadabs (Bruker, 2001)'
 
 {% if temperature and temperature != None %}
 _diffrn_ambient_temperature       {{ temperature }} (2)
@@ -22,3 +35,9 @@ _diffrn_measurement_method        'Omega Scan'
 _computing_data_collection        'AS QEGUI'
 _computing_cell_refinement        'XDS (Kabsch, 1993)'
 _computing_data_reduction         'XDS (Kabsch, 1993)'
+_computing_structure_solution     'user input'
+
+_computing_molecular_graphics     'user input'
+_computing_publication_material   'user input'
+_refine_special_details           'user input'
+_refine_ls_hydrogen_treatment     'user input'
