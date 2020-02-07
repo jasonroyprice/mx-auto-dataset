@@ -3,17 +3,17 @@ _audit_creation_method            SHELXL-97
 _exptl_crystal_density_method     'not measured'
 
 {% if temperature and temperature != None %}
-_cell_measurement_temperature     'temp_from_device'
+_cell_measurement_temperature     '{{ temperature }}'
 {% endif %}
-_cell_measurement_reflns_used     'can be found in IDXREF.LP'
+_cell_measurement_reflns_used     '{{ index }}'
 _cell_measurement_theta_min       'Value not reported by XDS'
-_cell_measurement_theta_max        'Value not reported by XDS'
+_cell_measurement_theta_max       'Value not reported by XDS'
 
-_exptl_crystal_description        'user input'
-_exptl_crystal_colour             'user input'
-_exptl_crystal_size_max           'user input'
-_exptl_crystal_size_mid           'user input'
-_exptl_crystal_size_min           'user input'
+_exptl_crystal_description        '{{ description }}'
+_exptl_crystal_colour             '{{ colour }}'
+_exptl_crystal_size_max           '{{ size_max }}'
+_exptl_crystal_size_mid           '{{ size_mid }}'
+_exptl_crystal_size_min           '{{ size_min }}'
 
 _exptl_absorpt_correction_type    'Multi-Scan'
 _exptl_absorpt_correction_T_min   'Value not reported by XDS' or 'can be found in sad.abs'
