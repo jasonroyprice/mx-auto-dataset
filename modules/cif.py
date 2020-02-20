@@ -24,8 +24,6 @@ def write_template_file(project_dir, beamline, detector, energy_in_kev, cryojet_
         detector_text = 'Dectris Eiger2 9M'
     elif detector == 'eiger' and beamline == 'MX2':
         detector_text = 'Dectris Eiger 16M'
-    elif detector == 'adsc':
-        detector_text = 'ADSC Quantum 210r'
     else:
         raise Exception('Unknown detector')
 
@@ -91,7 +89,7 @@ class Cif(Base):
         try:
             sample_size_max = coll.sample_size_max
         except AttributeError:
-             sample_size_min = None
+             sample_size_max = None
 
         write_template_file(self.project_dir, coll.beamline, coll.detector_type, coll.energy, cryo_temp, crystal_in_monochromator, sample_desc, sample_colour, sample_size_min, sample_size_mid, sample_size_max)
 
