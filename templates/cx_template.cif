@@ -3,7 +3,7 @@ _audit_creation_method            SHELXL-97
 _exptl_crystal_density_method     'not measured'
 
 {% if temperature and temperature != None %}
-_cell_measurement_temperature     '{{ temperature }}'
+_cell_measurement_temperature     {{ temperature }} (2)
 {% endif %}
 _cell_measurement_reflns_used     '{{ index }}'
 _cell_measurement_theta_min       'Value not reported by XDS'
