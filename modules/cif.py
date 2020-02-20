@@ -73,23 +73,23 @@ class Cif(Base):
         try:
             sample_desc = coll.sample_desc
         except AttributeError:
-            sample_desc = None
+            sample_desc = 'user input'
         try:
             sample_colour = coll.sample_colour
         except AttributeError:
-            sample_colour = None
+            sample_colour = 'user input'
         try:
             sample_size_min = coll.sample_size_min
         except AttributeError:
-            sample_size_min = None
+            sample_size_min = 'user input'
         try:
             sample_size_mid = coll.sample_size_mid
         except AttributeError:
-             sample_size_mid = None
+             sample_size_mid = 'user input'
         try:
             sample_size_max = coll.sample_size_max
         except AttributeError:
-             sample_size_max = None
+             sample_size_max = 'user input'
 
         write_template_file(self.project_dir, coll.beamline, coll.detector_type, coll.energy, cryo_temp, crystal_in_monochromator, sample_desc, sample_colour, sample_size_min, sample_size_mid, sample_size_max)
 
